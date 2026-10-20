@@ -1,170 +1,85 @@
-
 <!DOCTYPE html>
-<html lang="ur">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sassta Bazar</title>
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f2f6f3;color:#20332a}
-header{background:#126b49;color:white;padding:22px;text-align:center}
-main{max-width:900px;margin:auto;padding:15px}
-section{background:white;padding:16px;margin:15px 0;border-radius:12px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-button{background:#147d54;color:white;border:0;padding:12px;border-radius:8px;cursor:pointer}
-input,select,textarea{box-sizing:border-box;width:100%;padding:11px;margin:6px 0;border:1px solid #ccd8d0;border-radius:7px}
-.product{background:#fff;border:1px solid #ddd;padding:12px;border-radius:10px}
-.product img{width:100%;max-height:180px;object-fit:contain}
-.price{color:#147d54;font-weight:bold;font-size:19px}
-.small{color:#65736b;font-size:13px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#eef3ee}
+.header{background:#0ea15a;color:white;padding:22px 16px;text-align:left;display:flex;align-items:center;gap:12px;position:relative}
+.header h1{font-size:28px;font-weight:900;line-height:1.1}
+.header p{font-size:16px;opacity:.95}
+.logoIcon{font-size:42px}
+.setBtn{position:absolute;right:12px;top:12px;width:42px;height:42px;border-radius:10px;border:0;background:white;font-size:20px;cursor:pointer}
+.wrap{padding:14px}
+.whiteBox{background:white;border-radius:22px;padding:16px;box-shadow:0 8px 24px #0001}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cat{position:relative;height:150px;border-radius:18px;overflow:hidden;cursor:pointer;border:0;width:100%}
+.cat img{width:100%;height:100%;object-fit:cover;display:block}
+.cat .label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#0ea15a 85%);color:white;padding:24px 10px 12px;text-align:center;font-weight:800;font-size:17px}
+.cat:active{transform:scale(.97)}
+
+/* Setting Panel */
+#panel{position:fixed;inset:0;background:#0006;display:none;z-index:50}
+.sheet{position:absolute;right:0;top:0;bottom:0;width:85%;max-width:320px;background:white;padding:18px;overflow:auto}
+.sheet h3{font-size:18px}
+.sheet li{list-style:none;padding:13px 12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px;background:#fafafa;cursor:pointer;font-weight:600}
+.sheet li small{display:block;color:#666;font-weight:400;font-size:12px;margin-top:2px}
+.close{background:#eee;border:0;padding:6px 10px;border-radius:8px;float:right}
 </style>
 </head>
 <body>
-<header>
-<h1>🛍️ Sassta Bazar</h1>
+<div class="header">
+<div class="logoIcon">🛍️</div>
+<div>
+<h1>Sassta Bazar</h1>
 <p>Har zaroorat, ek bazar</p>
-</header>
-<main>
-<section>
-<h2>Apni category chunein</h2>
-<div class="grid" id="categories">
-<button onclick="choose('Market')">🧺 Market</button>
-<button onclick="choose('Restaurant')">🍽️ Restaurant</button>
-<button onclick="choose('Company')">🏢 Company</button>
-<button onclick="choose('Shop')">🏪 Shop</button>
-<button onclick="choose('Home Food')">🍲 Home Food</button>
-<button onclick="choose('Services')">🧰 Services</button>
 </div>
-<p id="selected">Products dekhne ke liye category chunein.</p>
-</section>
+<button class="setBtn" onclick="openSet()">⚙️</button>
+</div>
 
-<section>
-<h2>Seller Registration</h2>
-<p class="small">Yeh abhi demo form hai. Online verification abhi connect nahi.</p>
-<form id="sellerForm">
-<label>Business ki category</label>
-<select id="stype" required>
-<option value="">Category chunein</option>
-<option>Company</option><option>Store</option>
-<option>Home Food</option><option>Restaurant</option>
-<option>Shop</option><option>Products seller</option>
-<option>Services</option>
-</select>
-<input id="owner" placeholder="Owner ka naam" required>
-<input id="mobile" placeholder="Mobile number" inputmode="tel" required>
-<input id="city" placeholder="Shehar" required>
-<input id="area" placeholder="Area / location" required>
-<input id="shop" placeholder="Dukaan / business ka naam" required>
-<input id="shopno" placeholder="Dukaan number (agar ho)">
-<textarea id="sellerinfo" placeholder="Business ki tafseel"></textarea>
-<label><input type="checkbox" required style="width:auto"> Meri di hui details durust hain.</label>
-<button type="submit">Registration save karein</button>
-</form>
-<p id="sellerresult"></p>
-</section>
+<div class="wrap">
+<div class="whiteBox">
+<div class="grid">
+<button class="cat" onclick="go('Market')"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"><div class="label">Market</div></button>
+<button class="cat" onclick="go('Restaurant')"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400"><div class="label">Restaurant</div></button>
+<button class="cat" onclick="go('Company')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400"><div class="label">Company</div></button>
+<button class="cat" onclick="go('Shop')"><img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400"><div class="label">Shop</div></button>
+<button class="cat" onclick="go('Home Food')"><img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400"><div class="label">Home Food</div></button>
+<button class="cat" onclick="go('Services')"><img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400"><div class="label">Services</div></button>
+<button class="cat" onclick="go('Mart')"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400"><div class="label">Mart</div></button>
+<button class="cat" onclick="go('Mall')"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400"><div class="label">Mall</div></button>
+<button class="cat" onclick="go('Store')"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400"><div class="label">Store</div></button>
+</div>
+</div>
+</div>
 
-<section>
-<h2>Product Add Karein</h2>
-<p class="small">Apni asli product photo upload karein. Photo na ho to placeholder dikhega.</p>
-<form id="productForm">
-<input id="pname" placeholder="Product ya service ka naam" required>
-<select id="pcat" required>
-<option value="">Category chunein</option>
-<option>Market</option><option>Restaurant</option>
-<option>Company</option><option>Shop</option>
-<option>Home Food</option><option>Services</option>
-</select>
-<input id="price" type="number" min="0" placeholder="Qeemat (Rs.)" required>
-<input id="qty" placeholder="Quantity / availability" required>
-<input id="photo" type="file" accept="image/*">
-<textarea id="details" placeholder="Product ki tafseel"></textarea>
-<button type="submit">Product save karein</button>
-</form>
-<p id="productresult"></p>
-</section>
+<!-- Setting Panel Final -->
+<div id="panel" onclick="if(event.target.id==='panel')closeSet()">
+<div class="sheet">
+<button class="close" onclick="closeSet()">✕</button>
+<h3>Setting</h3>
+<div style="margin-top:16px">
+<li onclick="openReg('Company')">Company Registration <small>Factory / Brand</small></li>
+<li onclick="openReg('Restaurant')">Restaurant Registration <small>Fast food / BBQ</small></li>
+<li onclick="openReg('Home Food')">Home Food Registration <small>Ghar ka khana</small></li>
+<li onclick="openReg('Shop')">Shop Registration <small>General store</small></li>
+<li onclick="openReg('Store')">Store Registration <small>Wholesale</small></li>
+<li onclick="openReg('Mart')">Mart Registration</li>
+<li onclick="openReg('Mall')">Mall Registration</li>
+<li onclick="openComplaint()" style="background:#fff3e0;border-color:#ffcc80">📩 Shikayat Box <small>Owner roz dekhega</small></li>
+</div>
+<p style="margin-top:20px;font-size:11px;color:#888">Owner: Arsalan Khan - Final Version</p>
+</div>
+</div>
 
-<section>
-<h2 id="listtitle">Products</h2>
-<input id="search" placeholder="Product search karein">
-<div id="list" class="grid"></div>
-<p id="empty">Abhi products add nahi huay.</p>
-</section>
-</main>
 <script>
-let category='';
-let products=[];
-try{products=JSON.parse(localStorage.getItem('sassta_products')||'[]')}catch(e){products=[]}
-const $=id=>document.getElementById(id);
-function choose(c){
- category=category===c?'':c;
- $('selected').textContent=category?'Chuni hui category: '+category:'Koi category select nahi.';
- $('pcat').value=category;
- render();
-}
-$('sellerForm').addEventListener('submit',function(e){
- e.preventDefault();
- const data={
- type:$('stype').value,owner:$('owner').value,
- mobile:$('mobile').value,city:$('city').value,
- area:$('area').value,shop:$('shop').value,
- shopno:$('shopno').value,details:$('sellerinfo').value
- };
- try{
- localStorage.setItem('sassta_seller',JSON.stringify(data));
- $('sellerresult').textContent='Demo registration is device par save ho gayi. Online submit nahi hui.';
- }catch(err){$('sellerresult').textContent='Save nahi ho saka.'}
-});
-$('productForm').addEventListener('submit',function(e){
- e.preventDefault();
- if(products.length>=1000){$('productresult').textContent='Demo limit 1,000 products hai.';return}
- const file=$('photo').files[0];
- function save(photo){
- products.unshift({
- name:$('pname').value,category:$('pcat').value,
- price:$('price').value,qty:$('qty').value,
- details:$('details').value,photo:photo
- });
- try{
- localStorage.setItem('sassta_products',JSON.stringify(products));
- $('productForm').reset();
- $('productresult').textContent='Product is device par save ho gaya.';
- render();
- }catch(err){
- products.shift();
- $('productresult').textContent='Storage bhar gayi ho sakti hai. Chhoti photo try karein.';
- }
- }
- if(file){
- if(file.size>700000){$('productresult').textContent='Chhoti photo upload karein (700 KB se kam).';return}
- const reader=new FileReader();
- reader.onload=()=>save(reader.result);
- reader.onerror=()=>save('');
- reader.readAsDataURL(file);
- }else save('');
-});
-$('search').addEventListener('input',render);
-function render(){
- const term=$('search').value.toLowerCase();
- const shown=products.filter(p=>
- (!category||p.category===category)&&
- (p.name.toLowerCase().includes(term)||p.details.toLowerCase().includes(term))
- );
- $('listtitle').textContent=category?category+' Products':'Products';
- $('list').innerHTML='';
- shown.forEach(p=>{
- const box=document.createElement('div');box.className='product';
- const img=document.createElement('img');
- img.alt='Product photo';
- img.src=p.photo||'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120"><rect width="100%" height="100%" fill="#edf1ee"/><text x="50%" y="50%" text-anchor="middle" fill="#65736b">Photo nahi</text></svg>');
- const name=document.createElement('h3');name.textContent=p.name;
- const cat=document.createElement('p');cat.textContent=p.category+' · '+p.qty;
- const price=document.createElement('p');price.className='price';price.textContent='Rs. '+Number(p.price).toLocaleString('en-PK');
- const details=document.createElement('p');details.textContent=p.details;
- box.append(img,name,cat,price,details);$('list').append(box);
- });
- $('empty').style.display=shown.length?'none':'block';
-}
-render();
+function openSet(){document.getElementById('panel').style.display='block'}
+function closeSet(){document.getElementById('panel').style.display='none'}
+function go(c){localStorage.setItem('sb_cat',c);alert(c+' - Iska page Part 3 me banayenge (products.html)')}
+function openReg(t){closeSet();alert(t+' Registration - Iska page Part 2 me banayenge (registration.html) - Fields: City, Ilaqa, Address, Shop naam, Location, Owner, Number');}
+function openComplaint(){closeSet();alert('Shikayat Box - Part 4 me banayenge (shikayat.html)')}
 </script>
 </body>
 </html>
