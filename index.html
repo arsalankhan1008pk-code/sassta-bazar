@@ -7,79 +7,54 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#eef3ee}
-.header{background:#0ea15a;color:white;padding:22px 16px;text-align:left;display:flex;align-items:center;gap:12px;position:relative}
-.header h1{font-size:28px;font-weight:900;line-height:1.1}
-.header p{font-size:16px;opacity:.95}
-.logoIcon{font-size:42px}
-.setBtn{position:absolute;right:12px;top:12px;width:42px;height:42px;border-radius:10px;border:0;background:white;font-size:20px;cursor:pointer}
-.wrap{padding:14px}
-.whiteBox{background:white;border-radius:22px;padding:16px;box-shadow:0 8px 24px #0001}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cat{position:relative;height:150px;border-radius:18px;overflow:hidden;cursor:pointer;border:0;width:100%}
-.cat img{width:100%;height:100%;object-fit:cover;display:block}
-.cat .label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#0ea15a 85%);color:white;padding:24px 10px 12px;text-align:center;font-weight:800;font-size:17px}
-.cat:active{transform:scale(.97)}
-
-/* Setting Panel */
-#panel{position:fixed;inset:0;background:#0006;display:none;z-index:50}
-.sheet{position:absolute;right:0;top:0;bottom:0;width:85%;max-width:320px;background:white;padding:18px;overflow:auto}
-.sheet h3{font-size:18px}
-.sheet li{list-style:none;padding:13px 12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px;background:#fafafa;cursor:pointer;font-weight:600}
-.sheet li small{display:block;color:#666;font-weight:400;font-size:12px;margin-top:2px}
-.close{background:#eee;border:0;padding:6px 10px;border-radius:8px;float:right}
+.header{background:#0ea15a;color:white;padding:16px;text-align:center;position:relative}
+.setBtn{position:absolute;right:12px;top:12px;background:#ffffff22;border:0;color:white;padding:8px 12px;border-radius:10px;font-size:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}
+.card{background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px #0001;text-align:center}
+.card img{width:100%;height:90px;object-fit:cover}
+.card b{display:block;padding:8px 4px 2px;font-size:14px}
+.card span{font-size:11px;color:#666;padding-bottom:8px;display:block}
+#setting{position:fixed;inset:0;background:#0008;display:none;z-index:10}
+#settingBox{background:white;height:100%;width:85%;max-width:320px;padding:16px;overflow:auto;float:right}
+.sItem{background:#f5f5f5;padding:12px;border-radius:12px;margin-bottom:10px}
 </style>
 </head>
 <body>
 <div class="header">
-<div class="logoIcon">🛍️</div>
-<div>
-<h1>Sassta Bazar</h1>
-<p>Har zaroorat, ek bazar</p>
-</div>
-<button class="setBtn" onclick="openSet()">⚙️</button>
+<b>Sassta Bazar</b><br><small>Har zaroorat ek bazar</small>
+<button class="setBtn" onclick="document.getElementById('setting').style.display='block'">⚙️</button>
 </div>
 
-<div class="wrap">
-<div class="whiteBox">
 <div class="grid">
-<button class="cat" onclick="go('Market')"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"><div class="label">Market</div></button>
-<button class="cat" onclick="go('Restaurant')"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400"><div class="label">Restaurant</div></button>
-<button class="cat" onclick="go('Company')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400"><div class="label">Company</div></button>
-<button class="cat" onclick="go('Shop')"><img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400"><div class="label">Shop</div></button>
-<button class="cat" onclick="go('Home Food')"><img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400"><div class="label">Home Food</div></button>
-<button class="cat" onclick="go('Services')"><img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400"><div class="label">Services</div></button>
-<button class="cat" onclick="go('Mart')"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400"><div class="label">Mart</div></button>
-<button class="cat" onclick="go('Mall')"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400"><div class="label">Mall</div></button>
-<button class="cat" onclick="go('Store')"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400"><div class="label">Store</div></button>
-</div>
-</div>
+<div class="card" onclick="openCat('Market')"><img src="https://images.unsplash.com/photo-1604719312566-8912e9226c6a?w=400"><b>Market</b></div>
+<div class="card" onclick="openCat('Restaurant')"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400"><b>Restaurant</b></div>
+<div class="card" onclick="openCat('Company')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400"><b>Company</b></div>
+<div class="card" onclick="openCat('Shop')"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400"><b>Shop</b></div>
+<div class="card" onclick="openCat('Home Food')"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400"><b>Home Food</b></div>
+<div class="card" onclick="openCat('Services')"><img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400"><b>Services</b></div>
+<div class="card" onclick="openCat('Mart')"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"><b>Mart</b></div>
+<div class="card" onclick="openCat('Mall')"><img src="https://images.unsplash.com/photo-1519567241046-7f570eee3a2b?w=400"><b>Mall</b></div>
+<div class="card" onclick="openCat('Store')"><img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400"><b>Store</b></div>
 </div>
 
-<!-- Setting Panel Final -->
-<div id="panel" onclick="if(event.target.id==='panel')closeSet()">
-<div class="sheet">
-<button class="close" onclick="closeSet()">✕</button>
-<h3>Setting</h3>
-<div style="margin-top:16px">
-<li onclick="openReg('Company')">Company Registration <small>Factory / Brand</small></li>
-<li onclick="openReg('Restaurant')">Restaurant Registration <small>Fast food / BBQ</small></li>
-<li onclick="openReg('Home Food')">Home Food Registration <small>Ghar ka khana</small></li>
-<li onclick="openReg('Shop')">Shop Registration <small>General store</small></li>
-<li onclick="openReg('Store')">Store Registration <small>Wholesale</small></li>
-<li onclick="openReg('Mart')">Mart Registration</li>
-<li onclick="openReg('Mall')">Mall Registration</li>
-<li onclick="openComplaint()" style="background:#fff3e0;border-color:#ffcc80">📩 Shikayat Box <small>Owner roz dekhega</small></li>
-</div>
-<p style="margin-top:20px;font-size:11px;color:#888">Owner: Arsalan Khan - Final Version</p>
+<div id="setting" onclick="if(event.target==this)this.style.display='none'">
+<div id="settingBox">
+<h2>Setting <button onclick="document.getElementById('setting').style.display='none'" style="float:right;border:0;background:#eee;padding:6px 10px;border-radius:8px">X</button></h2>
+<br>
+<div class="sItem" onclick="goReg('Company')"><b>Company Registration</b></div>
+<div class="sItem" onclick="goReg('Restaurant')"><b>Restaurant Registration</b></div>
+<div class="sItem" onclick="goReg('Home Food')"><b>Home Food Registration</b></div>
+<div class="sItem" onclick="goReg('Shop')"><b>Shop Registration</b></div>
+<div class="sItem" onclick="goReg('Store')"><b>Store Registration</b></div>
+<div class="sItem" onclick="goReg('Mart')"><b>Mart Registration</b></div>
+<div class="sItem" onclick="goReg('Mall')"><b>Mall Registration</b></div>
+<div class="sItem" style="background:#fff3e0" onclick="location.href='shikayat.html'"><b>Shikayat Box</b></div>
 </div>
 </div>
 
 <script>
-function openSet(){document.getElementById('panel').style.display='block'}
-function closeSet(){document.getElementById('panel').style.display='none'}
-function go(c){localStorage.setItem('sb_cat',c);alert(c+' - Iska page Part 3 me banayenge (products.html)')}
-function openReg(t){closeSet();alert(t+' Registration - Iska page Part 2 me banayenge (registration.html) - Fields: City, Ilaqa, Address, Shop naam, Location, Owner, Number');}
-function openComplaint(){closeSet();alert('Shikayat Box - Part 4 me banayenge (shikayat.html)')}
+function openCat(c){localStorage.setItem('sb_cat',c);location.href='products.html'}
+function goReg(c){localStorage.setItem('sb_cat',c);location.href='registration.html'}
 </script>
 </body>
 </html>
