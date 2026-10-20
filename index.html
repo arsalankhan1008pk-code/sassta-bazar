@@ -1,163 +1,1045 @@
-
 <!DOCTYPE html>
 <html lang="ur">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#087f5b">
 <title>Sassta Bazar</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f3f7f4;color:#18352a}
-header{background:#087b48;color:white;padding:22px 15px;text-align:center}
-header h1{font-size:27px;margin-bottom:7px}
-header p{font-size:14px}
-main{max-width:650px;margin:auto;padding:15px}
-.card{background:white;padding:18px;margin-bottom:15px;border-radius:13px;box-shadow:0 2px 9px #0000000c}
-h2{font-size:20px;margin-bottom:14px}
-h3{font-size:16px;margin:10px 0}
-p{line-height:1.6;margin:8px 0}
-button{width:100%;padding:13px;border:0;border-radius:9px;background:#087b48;color:white;font-size:15px;cursor:pointer}
-button.secondary{background:#e5f3e9;color:#145a36;border:1px solid #b8d9c4}
-button:active{opacity:.8}
-input,select,textarea{width:100%;padding:12px;margin:7px 0 13px;border:1px solid #ccd8cf;border-radius:8px;font-size:15px;background:white}
-label{font-size:14px;font-weight:bold}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.hidden{display:none!important}
-.note{font-size:13px;color:#64756a}
-.category{padding:12px;background:#eaf5ed;border-radius:9px;text-align:center;font-size:14px}
-#message{margin-top:12px;color:#087b48;font-weight:bold}
-footer{text-align:center;padding:20px;color:#64756a;font-size:13px}
+:root {
+  --green: #087f5b;
+  --dark: #123b32;
+  --light: #eef8f3;
+  --muted: #64748b;
+  --line: #dce7e1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f8f6;
+  color: #17352e;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background: linear-gradient(120deg, #075c45, #0b8b63);
+  color: white;
+  padding: 18px 15px 20px;
+  border-radius: 0 0 22px 22px;
+}
+
+.top {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.tag {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: auto;
+  padding: 14px;
+}
+
+.hero,
+.panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 15px 0;
+}
+
+.hero {
+  margin-top: 14px;
+}
+
+h1 {
+  font-size: 23px;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 19px;
+  margin: 0 0 12px;
+}
+
+h3 {
+  font-size: 15px;
+  margin: 0 0 7px;
+}
+
+p {
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd9d1;
+  border-radius: 11px;
+  background: white;
+  color: #17352e;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 14px;
+  font-weight: 700;
+}
+
+.primary {
+  background: var(--green);
+  color: white;
+}
+
+.secondary {
+  background: #e4f3ec;
+  color: #075c45;
+}
+
+.plain {
+  background: white;
+  border: 1px solid var(--line);
+  color: var(--dark);
+}
+
+.pill {
+  border: 1px solid #ffffff80;
+  color: white;
+  background: #ffffff18;
+  border-radius: 99px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.searchrow {
+  display: flex;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.searchrow input {
+  flex: 1;
+  min-width: 0;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin: 14px 0;
+}
+
+.cat {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 13px 8px;
+  border-radius: 14px;
+  text-align: center;
+  min-height: 82px;
+  color: var(--dark);
+}
+
+.cat.active {
+  border: 2px solid var(--green);
+  background: var(--light);
+}
+
+.emoji {
+  display: block;
+  font-size: 23px;
+  margin-bottom: 7px;
+}
+
+.section {
+  margin: 18px 0;
+}
+
+.sectionhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.product-img {
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+  background: #edf2ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #73857d;
+  text-align: center;
+  padding: 15px;
+  font-size: 13px;
+}
+
+.product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardbody {
+  padding: 11px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+  margin: 6px 0;
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-block;
+  background: #e7f6ed;
+  color: var(--green);
+  border-radius: 99px;
+  padding: 4px 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.formgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.field {
+  margin-bottom: 10px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.notice {
+  background: #fff8df;
+  border: 1px solid #f3dda0;
+  padding: 11px;
+  border-radius: 11px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.success {
+  background: #e6f7ee;
+  color: #075c45;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 15px 0;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 25px 12px;
+}
+
+@media (min-width: 650px) {
+  .categories {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .product-img {
+    height: 175px;
+  }
+
+  .wrap {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 380px) {
+  .formgrid {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: auto;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1>🛍️ Sassta Bazar</h1>
-<p>Pakistan ka Apna Sasta Marketplace</p>
+  <div class="top">
+    <div>
+      <div class="brand">🛍️ Sassta Bazar</div>
+      <div class="tag">Aap ki market, aap ke qareeb</div>
+    </div>
+
+    <button class="pill" id="openAccount">
+      Account / Login
+    </button>
+  </div>
 </header>
 
-<main>
-<section class="card" id="home">
-<h2>Khush Aamdeed!</h2>
-<p>Shopping aur business ke liye apna option chunein.</p>
-<button onclick="showPage('customer')">Customer Shopping</button>
-<br><br>
-<button class="secondary" onclick="showPage('register')">Naya Account Banayein</button>
-<br><br>
-<button class="secondary" onclick="showPage('login')">Login</button>
-</section>
+<main class="wrap">
 
-<section class="card hidden" id="customer">
-<h2>Customer Shopping</h2>
-<p>Apni pasand ki category chunein.</p>
-<div class="grid">
-<div class="category">🛒 Grocery</div>
-<div class="category">🏪 Shops</div>
-<div class="category">🍽️ Restaurants</div>
-<div class="category">🍲 Homemade Food</div>
-<div class="category">🏢 Companies</div>
-<div class="category">🧰 Services</div>
-<div class="category">👗 Kapray</div>
-<div class="category">📱 Electronics</div>
-</div>
-<p id="customerMessage">Seller ki asli product photos aur prices upload hone ke baad yahan nazar aayengi.</p>
-<p class="note">Customer ko platform commission nahi dikhaya jayega. Order ki final price wazeh hogi.</p>
-<button onclick="showPage('register')">Customer Registration</button>
-<br><br>
-<button class="secondary" onclick="showPage('home')">Wapas</button>
-</section>
+  <section class="hero">
+    <h1>Kam qeemat, asaan khareedari</h1>
 
-<section class="card hidden" id="register">
-<h2>Alag Registration</h2>
-<label>Account ki Qisam</label>
-<select id="accountType" onchange="updateRegistration()">
-<option value="Customer">Customer</option>
-<option value="Shopkeeper">Shopkeeper</option>
-<option value="Restaurant">Restaurant</option>
-<option value="Homemade Food Seller">Homemade Food Seller</option>
-<option value="Company / Showroom">Company / Showroom</option>
-<option value="Service Provider">Service Provider</option>
-</select>
-<form id="registerForm">
-<label>Poora Naam</label>
-<input id="fullName" required placeholder="Apna naam likhein">
-<label>Mobile Number</label>
-<input id="phone" type="tel" required placeholder="03XXXXXXXXX">
-<label>Email (optional)</label>
-<input id="email" type="email" placeholder="Email address">
-<label>Password</label>
-<input id="password" type="password" required minlength="8" placeholder="Kam az kam 8 characters">
-<div id="businessFields" class="hidden">
-<label>Business ka Naam</label>
-<input id="businessName" placeholder="Shop ya business ka naam">
-<label>Business Address</label>
-<input id="businessAddress" placeholder="Shehar aur address">
-<label>Business Category</label>
-<select id="businessCategory">
-<option>Grocery</option>
-<option>Clothing</option>
-<option>Electronics</option>
-<option>Restaurant</option>
-<option>Homemade Food</option>
-<option>Company / Showroom</option>
-<option>Other Services</option>
-</select>
-</div>
-<button type="submit">Registration Form Check Karein</button>
-</form>
-<p id="message" aria-live="polite"></p>
-<p class="note">Yeh abhi demo form hai. Account abhi online save nahi hota.</p>
-<button class="secondary" onclick="showPage('home')">Wapas</button>
-</section>
+    <div class="muted">
+      Dukaan, grocery, restaurant, ghar ka khana,
+      companies aur services aik jagah.
+    </div>
 
-<section class="card hidden" id="login">
-<h2>Login</h2>
-<label>Account ki Qisam</label>
-<select id="loginType">
-<option>Customer</option>
-<option>Shopkeeper</option>
-<option>Restaurant</option>
-<option>Homemade Food Seller</option>
-<option>Company / Showroom</option>
-<option>Service Provider</option>
-</select>
-<label>Mobile Number ya Email</label>
-<input type="text" placeholder="Mobile ya email">
-<label>Password</label>
-<input type="password" placeholder="Password">
-<button onclick="alert('Asal login Firebase jorne ke baad chalega.')">Login</button>
-<p class="note">Asal login aur account security aglay marhalay mein jore jayenge.</p>
-<button class="secondary" onclick="showPage('home')">Wapas</button>
-</section>
+    <div class="searchrow">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Product ya service talash karein"
+      >
+      <button class="primary" id="searchBtn">Search</button>
+    </div>
+  </section>
 
-<section class="card hidden" id="sellerInfo">
-<h2>Seller ki Maloomat</h2>
-<p>Har seller apni asli product photos, prices aur quantity khud upload karega.</p>
-<p>Product ki tasveer upload hone se pehle koi banawati tasveer nahi dikhayi jayegi.</p>
-</section>
+  <section class="categories" id="categories">
+
+    <button class="cat active" data-category="All">
+      <span class="emoji">🧺</span>Sab
+    </button>
+
+    <button class="cat" data-category="Grocery">
+      <span class="emoji">🥬</span>Grocery
+    </button>
+
+    <button class="cat" data-category="Shop">
+      <span class="emoji">🏪</span>Dukaan
+    </button>
+
+    <button class="cat" data-category="Restaurant">
+      <span class="emoji">🍽️</span>Restaurant
+    </button>
+
+    <button class="cat" data-category="Homemade Food">
+      <span class="emoji">🍲</span>Ghar ka khana
+    </button>
+
+    <button class="cat" data-category="Company">
+      <span class="emoji">🏢</span>Company
+    </button>
+
+    <button class="cat" data-category="Services">
+      <span class="emoji">🧰</span>Services
+    </button>
+
+  </section>
+
+  <section class="section">
+    <div class="sectionhead">
+      <h2 id="listingTitle">Available listings</h2>
+      <span class="muted" id="resultCount">0 items</span>
+    </div>
+
+    <div class="grid" id="productGrid"></div>
+
+    <p id="emptyText" class="muted">
+      Abhi koi listing mojood nahi.
+      Seller apni asli photo ke sath listing add kar sakta hai.
+    </p>
+  </section>
+
+  <section class="panel" id="accountPanel">
+
+    <div class="sectionhead">
+      <h2>Account banayein / Login</h2>
+      <button class="plain" id="closeAccount">Band</button>
+    </div>
+
+    <div class="notice">
+      Phone number aur email nahi maange jayenge.
+      Yeh demo account isi browser/device par save hota hai.
+      Secure online account abhi connect nahi hai.
+    </div>
+
+    <div class="formgrid" style="margin-top:13px">
+
+      <div class="field">
+        <label for="accountMode">Kya karna hai?</label>
+        <select id="accountMode">
+          <option value="register">Naya account</option>
+          <option value="login">Login</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="accountType">Account ki qisam</label>
+        <select id="accountType">
+          <option>Customer</option>
+          <option>Shopkeeper</option>
+          <option>Restaurant</option>
+          <option>Homemade Food Seller</option>
+          <option>Company</option>
+          <option>Service Provider</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          maxlength="30"
+          placeholder="Apna username"
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="field">
+        <label for="password">Password / PIN</label>
+        <input
+          id="password"
+          type="password"
+          minlength="4"
+          maxlength="64"
+          placeholder="Kam az kam 4 characters"
+          autocomplete="new-password"
+        >
+      </div>
+
+      <div class="field full">
+        <button class="primary" id="accountSubmit">
+          Account banayein
+        </button>
+        <div id="accountMessage"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel hidden" id="sellerPanel">
+
+    <div class="sectionhead">
+      <h2>Apni listing add karein</h2>
+      <button class="plain" id="logoutBtn">Logout</button>
+    </div>
+
+    <p class="muted" id="sellerWelcome"></p>
+
+    <div class="notice">
+      Sirf apni asli product/service ki photo upload karein.
+      Photo upload na ho to neutral placeholder dikhaya jayega.
+      Koi farzi product tasveer nahi.
+    </div>
+
+    <form id="productForm" style="margin-top:13px">
+
+      <div class="formgrid">
+
+        <div class="field">
+          <label for="productName">Product / service ka naam *</label>
+          <input
+            id="productName"
+            required
+            maxlength="80"
+            placeholder="Misal: Aata 10kg"
+          >
+        </div>
+
+        <div class="field">
+          <label for="productCategory">Category *</label>
+          <select id="productCategory" required>
+            <option>Grocery</option>
+            <option>Shop</option>
+            <option>Restaurant</option>
+            <option>Homemade Food</option>
+            <option>Company</option>
+            <option>Services</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="productPrice">Qeemat (Rs.) *</label>
+          <input
+            id="productPrice"
+            type="number"
+            min="0"
+            step="1"
+            required
+            placeholder="Misal: 500"
+          >
+        </div>
+
+        <div class="field">
+          <label for="productQty">Quantity / availability</label>
+          <input
+            id="productQty"
+            maxlength="50"
+            placeholder="Misal: 10 available"
+          >
+        </div>
+
+        <div class="field full">
+          <label for="productPhoto">Asli photo (optional)</label>
+          <input id="productPhoto" type="file" accept="image/*">
+          <div class="small">
+            Apne phone se asli photo select karein.
+            Photo is demo mein isi device par rahegi.
+          </div>
+        </div>
+
+        <div class="field full">
+          <label for="productDetails">Details</label>
+          <textarea
+            id="productDetails"
+            rows="3"
+            maxlength="500"
+            placeholder="Product ya service ki maloomat"
+          ></textarea>
+        </div>
+
+        <div class="field full">
+          <button class="primary" type="submit">
+            Listing save karein
+          </button>
+          <div id="productMessage"></div>
+        </div>
+
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Commission ki maloomat</h2>
+
+    <div class="muted">
+      Company: 2%<br>
+      Dukaan/Grocery/Services: 5%<br>
+      Restaurant: 10%<br>
+      Homemade Food: 10%<br>
+      Customer platform commission: Rs. 0<br>
+      Registration fee: Rs. 0
+    </div>
+
+    <p class="small">
+      Yeh demo mein dikhayi gayi proposed policy hai.
+      Automatic commission collection, orders, refunds aur
+      bank settlement ke liye backend aur payment provider
+      configure aur test karna zaroori hai.
+    </p>
+  </section>
+
 </main>
 
-<footer>Sassta Bazar © 2026</footer>
+<footer>
+  Sassta Bazar • Demo version • Asli seller photo ke baghair
+  koi product photo nahi dikhayi jati.
+</footer>
 
 <script>
-function showPage(page){
-document.querySelectorAll('main > section').forEach(function(section){
-section.classList.add('hidden');
-});
-document.getElementById(page).classList.remove('hidden');
-window.scrollTo(0,0);
-}
-function updateRegistration(){
-var type=document.getElementById('accountType').value;
-var business=type!=='Customer';
-document.getElementById('businessFields').classList.toggle('hidden',!business);
-document.getElementById('businessName').required=business;
-}
-document.getElementById('registerForm').addEventListener('submit',function(event){
-event.preventDefault();
-var type=document.getElementById('accountType').value;
-document.getElementById('message').textContent=
-type+' ka form check ho gaya. Abhi account save nahi hua; Firebase jorna baqi hai.';
-});
+(function () {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+
+  const STORE_KEY = 'sassta_bazar_demo_v1';
+  const USER_KEY = 'sassta_bazar_users_v1';
+  const SESSION_KEY = 'sassta_bazar_session_v1';
+
+  let selectedCategory = 'All';
+  let currentUser = null;
+  let photoData = '';
+
+  function read(key, fallback) {
+    try {
+      return JSON.parse(localStorage.getItem(key)) ?? fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function write(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+  }
+
+  function money(value) {
+    return 'Rs. ' + Number(value || 0).toLocaleString('en-PK');
+  }
+
+  function products() {
+    return read(STORE_KEY, []);
+  }
+
+  function setMessage(id, message, good) {
+    $(id).innerHTML =
+      '<div class="' + (good ? 'success' : 'notice') + '">' +
+      escapeHTML(message) +
+      '</div>';
+  }
+
+  function renderProducts() {
+    const query = $('searchInput').value.trim().toLowerCase();
+
+    const list = products().filter(product => {
+      const categoryMatch =
+        selectedCategory === 'All' ||
+        product.category === selectedCategory;
+
+      const text = (
+        product.name + ' ' +
+        product.category + ' ' +
+        product.details + ' ' +
+        product.seller
+      ).toLowerCase();
+
+      return categoryMatch && (!query || text.includes(query));
+    });
+
+    $('productGrid').innerHTML = '';
+    $('resultCount').textContent = list.length + ' items';
+
+    $('listingTitle').textContent =
+      selectedCategory === 'All'
+        ? 'Available listings'
+        : selectedCategory + ' listings';
+
+    $('emptyText').classList.toggle('hidden', list.length !== 0);
+
+    list.forEach(product => {
+      const card = document.createElement('article');
+      card.className = 'card';
+
+      const image = document.createElement('div');
+      image.className = 'product-img';
+
+      if (product.photo) {
+        const img = document.createElement('img');
+        img.src = product.photo;
+        img.alt = 'Seller uploaded photo of ' + product.name;
+        image.appendChild(img);
+      } else {
+        image.textContent = 'Asli photo abhi upload nahi hui';
+      }
+
+      const body = document.createElement('div');
+      body.className = 'cardbody';
+
+      body.innerHTML =
+        '<span class="badge">' +
+        escapeHTML(product.category) +
+        '</span>' +
+
+        '<h3>' + escapeHTML(product.name) + '</h3>' +
+
+        '<div class="price">' +
+        money(product.price) +
+        '</div>' +
+
+        '<div class="small">' +
+        escapeHTML(
+          product.qty || 'Availability seller se confirm karein'
+        ) +
+        '</div>' +
+
+        '<p class="muted">' +
+        escapeHTML(product.details || '') +
+        '</p>' +
+
+        '<div class="small">Seller: ' +
+        escapeHTML(product.seller || 'Seller') +
+        '</div>' +
+
+        '<hr>' +
+
+        '<button class="secondary" type="button">' +
+        'Order ke liye rabta' +
+        '</button>' +
+
+        '<p class="small">Demo: order/payment abhi active nahi.</p>';
+
+      card.appendChild(image);
+      card.appendChild(body);
+      $('productGrid').appendChild(card);
+    });
+  }
+
+  function updateAccountUI() {
+    $('accountPanel').classList.toggle(
+      'hidden',
+      !!currentUser
+    );
+
+    $('sellerPanel').classList.toggle(
+      'hidden',
+      !currentUser || currentUser.type === 'Customer'
+    );
+
+    if (currentUser && currentUser.type !== 'Customer') {
+      $('sellerWelcome').textContent =
+        'Login: ' + currentUser.username +
+        ' (' + currentUser.type + ')';
+    }
+
+    $('openAccount').textContent = currentUser
+      ? 'Account: ' + currentUser.username
+      : 'Account / Login';
+  }
+
+  function normalizeUser(value) {
+    return value.trim().toLowerCase();
+  }
+
+  $('categories').addEventListener('click', event => {
+    const button = event.target.closest('button[data-category]');
+
+    if (!button) return;
+
+    selectedCategory = button.dataset.category;
+
+    document.querySelectorAll('.cat').forEach(item => {
+      item.classList.toggle('active', item === button);
+    });
+
+    renderProducts();
+  });
+
+  $('searchBtn').addEventListener('click', renderProducts);
+
+  $('searchInput').addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      renderProducts();
+    }
+  });
+
+  $('openAccount').addEventListener('click', () => {
+    $('accountPanel').classList.remove('hidden');
+
+    $('accountPanel').scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  });
+
+  $('closeAccount').addEventListener('click', () => {
+    $('accountPanel').classList.add('hidden');
+  });
+
+  $('accountMode').addEventListener('change', () => {
+    $('accountSubmit').textContent =
+      $('accountMode').value === 'register'
+        ? 'Account banayein'
+        : 'Login karein';
+
+    $('accountMessage').innerHTML = '';
+  });
+
+  $('accountSubmit').addEventListener('click', () => {
+    const mode = $('accountMode').value;
+    const type = $('accountType').value;
+    const username = $('username').value.trim();
+    const password = $('password').value;
+
+    if (username.length < 3) {
+      setMessage(
+        'accountMessage',
+        'Username kam az kam 3 characters ka hona chahiye.',
+        false
+      );
+      return;
+    }
+
+    if (password.length < 4) {
+      setMessage(
+        'accountMessage',
+        'Password/PIN kam az kam 4 characters ka hona chahiye.',
+        false
+      );
+      return;
+    }
+
+    const users = read(USER_KEY, []);
+    const key = normalizeUser(username);
+
+    if (mode === 'register') {
+      if (users.some(user => user.key === key)) {
+        setMessage(
+          'accountMessage',
+          'Yeh username pehle se mojood hai. Login karein ya doosra username chunein.',
+          false
+        );
+        return;
+      }
+
+      users.push({
+        key: key,
+        username: username,
+        type: type,
+        password: password
+      });
+
+      write(USER_KEY, users);
+
+      currentUser = {
+        username: username,
+        type: type
+      };
+
+      write(SESSION_KEY, currentUser);
+
+      setMessage(
+        'accountMessage',
+        'Demo account ban gaya. Yeh secure online account nahi hai.',
+        true
+      );
+
+    } else {
+      const found = users.find(user =>
+        user.key === key && user.password === password
+      );
+
+      if (!found) {
+        setMessage(
+          'accountMessage',
+          'Username ya password ghalat hai, ya account is browser mein mojood nahi.',
+          false
+        );
+        return;
+      }
+
+      currentUser = {
+        username: found.username,
+        type: found.type
+      };
+
+      write(SESSION_KEY, currentUser);
+
+      setMessage(
+        'accountMessage',
+        'Demo login ho gaya.',
+        true
+      );
+    }
+
+    updateAccountUI();
+  });
+
+  $('logoutBtn').addEventListener('click', () => {
+    currentUser = null;
+    localStorage.removeItem(SESSION_KEY);
+    updateAccountUI();
+
+    $('accountPanel').classList.remove('hidden');
+    $('accountMessage').innerHTML = '';
+  });
+
+  $('productPhoto').addEventListener('change', event => {
+    photoData = '';
+
+    const file = event.target.files &&
+      event.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage(
+        'productMessage',
+        'Meharbani karke image file select karein.',
+        false
+      );
+
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setMessage(
+        'productMessage',
+        'Demo ke liye 2 MB se chhoti photo select karein.',
+        false
+      );
+
+      event.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      photoData = String(reader.result || '');
+    };
+
+    reader.onerror = () => {
+      setMessage(
+        'productMessage',
+        'Photo read nahi ho saki. Dobara try karein.',
+        false
+      );
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  $('productForm').addEventListener('submit', event => {
+    event.preventDefault();
+
+    if (!currentUser || currentUser.type === 'Customer') {
+      setMessage(
+        'productMessage',
+        'Listing add karne ke liye seller account se login karein.',
+        false
+      );
+      return;
+    }
+
+    const name = $('productName').value.trim();
+    const price = Number($('productPrice').value);
+
+    if (!name || !Number.isFinite(price) || price < 0) {
+      setMessage(
+        'productMessage',
+        'Naam aur durust qeemat likhein.',
+        false
+      );
+      return;
+    }
+
+    const item = {
+      id: Date.now(),
+      name: name,
+      category: $('productCategory').value,
+      price: price,
+      qty: $('productQty').value.trim(),
+      details: $('productDetails').value.trim(),
+      photo: photoData,
+      seller: currentUser.username
+    };
+
+    const all = products();
+    all.unshift(item);
+
+    try {
+      write(STORE_KEY, all);
+    } catch (error) {
+      setMessage(
+        'productMessage',
+        'Device ki storage bhar gayi. Chhoti photo try karein.',
+        false
+      );
+      return;
+    }
+
+    event.target.reset();
+    photoData = '';
+
+    setMessage(
+      'productMessage',
+      'Listing is browser mein save ho gayi. Yeh abhi online publish nahi hui.',
+      true
+    );
+
+    renderProducts();
+  });
+
+  const savedSession = read(SESSION_KEY, null);
+
+  if (
+    savedSession &&
+    savedSession.username &&
+    savedSession.type
+  ) {
+    currentUser = savedSession;
+  }
+
+  updateAccountUI();
+  renderProducts();
+
+})();
 </script>
+
 </body>
 </html>
