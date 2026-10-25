@@ -37,7 +37,7 @@ label{font-size:14px;font-weight:bold}
 .drawer{position:absolute;right:0;top:0;height:100%;width:min(88%,420px);overflow:auto;background:white;padding:20px}
 .drawer h2{margin-top:5px}
 .settingbtn{display:block;width:100%;text-align:left;padding:16px;margin:9px 0;border:0;border-radius:13px;background:#f2f3f2;font-weight:bold}
-footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
+footer{text-align:center;color:#66736a;font-size:12px;padding:10px}
 </style>
 </head>
 <body>
@@ -51,8 +51,6 @@ footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
 <section id="home">
 <h3>Apni pasand ka bazar chunein</h3>
 <div class="grid" id="categories"></div>
-<h3>Shops aur Sellers</h3>
-<div id="homeSellers"></div>
 </section>
 
 <section id="listing" class="hidden">
@@ -120,9 +118,6 @@ footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
 <button class="settingbtn" onclick="startRegistration('Home Food')">Home Food Registration</button>
 <button class="settingbtn" onclick="startRegistration('Accessories')">Accessories Registration</button>
 <button class="settingbtn" onclick="openSection('complaint')">Shikayat Box</button>
-<button class="settingbtn" onclick="contactInfo('Chat')">💬 Chat System</button>
-<button class="settingbtn" onclick="contactInfo('Call')">📞 Call System</button>
-<p style="color:#68736b;font-size:13px">Personal phone, email aur password seller listing par nahi dikhaye jate.</p>
 </div>
 </div>
 
@@ -197,7 +192,6 @@ function openSection(id){
 
 function goHome(){
  showSection("home");
- renderHome();
 }
 
 function goListing(){
@@ -210,13 +204,6 @@ function startRegistration(category){
  document.getElementById("regCategory").value=category;
  document.getElementById("regMessage").textContent="";
  showSection("registration");
-}
-
-function contactInfo(type){
- closeSettings();
- alert(type==="Chat"
- ?"Chat abhi online connect nahi hai. Asal messaging ke liye backend connect karna hoga."
- :"Call abhi connect nahi hai. Asal in-app calling ke liye calling service connect karni hogi.");
 }
 
 function showCategory(category){
@@ -248,17 +235,6 @@ function sellerCard(s){
  return el;
 }
 
-function renderHome(){
- const box=document.getElementById("homeSellers");
- box.innerHTML="";
-
- if(!sellers.length){
- box.innerHTML='<div class="panel">Abhi sellers register nahi hue. Categories chunein ya Settings se registration karein.</div>';
- }else{
- sellers.forEach(s=>box.appendChild(sellerCard(s)));
- }
-}
-
 function showSeller(id){
  activeSeller=sellers.find(s=>s.id===id);
  if(!activeSeller)return;
@@ -270,7 +246,7 @@ function showSeller(id){
  const card=document.createElement("div");
  card.className="panel";
  card.innerHTML=makeImage(s.dp,"🏪")+
- '<h2></h2><p class="owner"></p><p class="city"></p><p class="area"></p><p class="place"></p><button class="light" onclick="contactInfo(\'Chat\')">💬 Chat</button> <button class="light" onclick="contactInfo(\'Call\')">📞 Call</button>';
+ '<h2></h2><p class="owner"></p><p class="city"></p><p class="area"></p><p class="place"></p>';
 
  card.querySelector("h2").textContent=s.name;
  card.querySelector(".owner").textContent="Owner: "+s.owner;
@@ -333,7 +309,6 @@ document.getElementById("regForm").addEventListener("submit",function(e){
  document.getElementById("regMessage").textContent="Registration is device par save ho gayi. Online listing ke liye database baad mein connect hoga.";
  this.reset();
  renderCategories();
- renderHome();
 });
 
 document.getElementById("complaintForm").addEventListener("submit",function(e){
@@ -348,7 +323,6 @@ document.getElementById("complaintForm").addEventListener("submit",function(e){
 });
 
 renderCategories();
-renderHome();
 </script>
 </body>
 </html>
