@@ -15,7 +15,6 @@ button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 .topbtn{position:absolute;right:12px;top:17px;background:#ffffff30;border:0;border-radius:12px;padding:12px;color:white}
 main{max-width:850px;margin:auto;padding:14px}
-#search{width:100%;padding:13px;border:1px solid #ddd;border-radius:12px;margin-bottom:14px}
 h3{margin-top:8px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .category{padding:0;border:0;border-radius:20px;overflow:hidden;background:white;box-shadow:0 4px 15px #0001;text-align:center;color:#202820}
@@ -38,7 +37,6 @@ label{font-size:14px;font-weight:bold}
 .drawer{position:absolute;right:0;top:0;height:100%;width:min(88%,420px);overflow:auto;background:white;padding:20px}
 .drawer h2{margin-top:5px}
 .settingbtn{display:block;width:100%;text-align:left;padding:16px;margin:9px 0;border:0;border-radius:13px;background:#f2f3f2;font-weight:bold}
-#notice{font-size:13px;color:#59665d;text-align:center;padding:15px}
 footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
 </style>
 </head>
@@ -51,7 +49,6 @@ footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
 
 <main>
 <section id="home">
-<input id="search" placeholder="Product, shop, company, city search karein" oninput="searchAll()">
 <h3>Apni pasand ka bazar chunein</h3>
 <div class="grid" id="categories"></div>
 <h3>Shops aur Sellers</h3>
@@ -92,9 +89,9 @@ footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
 <label>Shop / Building number (agar ho)</label>
 <input id="shopNumber" placeholder="Shop ya building number">
 <label>DP photo ka image link (optional)</label>
-<input id="dp" type="url" placeholder="Apni business photo ka link">
+<input id="dp" type="url" placeholder="Business photo ka link">
 <label>Products (har product alag line par)</label>
-<textarea id="productsInput" rows="5" placeholder="Product naam | Price | Quantity | Photo link (optional)&#10;Misal: Chawal | 250 | 1 kg"></textarea>
+<textarea id="productsInput" rows="5" placeholder="Product naam | Price | Quantity | Photo link (optional)"></textarea>
 <button class="green full" type="submit">Registration Save Karein</button>
 </form>
 <p id="regMessage"></p>
@@ -106,7 +103,7 @@ footer{text-align:center;color:#66736a;font-size:12px;padding:20px}
 <form id="complaintForm">
 <label>Shikayat ki tafseel</label>
 <textarea id="complaintText" required rows="5" placeholder="Apni shikayat likhein"></textarea>
-<button class="green full">Shikayat Save Karein</button>
+<button class="green full" type="submit">Shikayat Save Karein</button>
 </form>
 <p id="complaintMessage"></p>
 </section>
@@ -140,6 +137,7 @@ const categories=[
 {name:"Home Food",icon:"🍲"},
 {name:"Accessories",icon:"👜"}
 ];
+
 let activeCategory="";
 let activeSeller=null;
 let sellers=load("sb_sellers",[]);
@@ -149,63 +147,99 @@ function load(key,fallback){
  try{return JSON.parse(localStorage.getItem(key))||fallback}
  catch(e){return fallback}
 }
+
 function save(){
  localStorage.setItem("sb_sellers",JSON.stringify(sellers));
 }
+
 function safeImage(url){
  return typeof url==="string"&&/^https?:\/\//i.test(url);
 }
+
 function makeImage(url,icon){
- if(safeImage(url))return '<img class="avatar" src="'+url.replace(/"/g,"&quot;")+'" alt="Business photo">';
+ if(safeImage(url)){
+ const img=document.createElement("img");
+ img.className="avatar";
+ img.src=url;
+ img.alt="Business photo";
+ return img.outerHTML;
+ }
  return '<div class="avatar">'+icon+'</div>';
 }
+
 function renderCategories(){
  document.getElementById("categories").innerHTML=categories.map(c=>
  '<button class="category" onclick="showCategory('+JSON.stringify(c.name)+')"><div class="catpic">'+c.icon+'</div><strong>'+c.name+'</strong></button>'
  ).join("");
+
  document.getElementById("regCategory").innerHTML=categories.map(c=>
  '<option>'+c.name+'</option>').join("");
 }
+
 function showSection(id){
  ["home","listing","detail","registration","complaint"].forEach(s=>
  document.getElementById(s).classList.toggle("hidden",s!==id));
  window.scrollTo(0,0);
 }
-function openSettings(){document.getElementById("settings").style.display="block"}
-function closeSettings(){document.getElementById("settings").style.display="none"}
-function openSection(id){closeSettings();showSection(id)}
-function goHome(){showSection("home");renderHome()}
-function goListing(){showSection("listing");showCategory(activeCategory)}
+
+function openSettings(){
+ document.getElementById("settings").style.display="block";
+}
+
+function closeSettings(){
+ document.getElementById("settings").style.display="none";
+}
+
+function openSection(id){
+ closeSettings();
+ showSection(id);
+}
+
+function goHome(){
+ showSection("home");
+ renderHome();
+}
+
+function goListing(){
+ showCategory(activeCategory);
+}
+
 function startRegistration(category){
  closeSettings();
- document.getElementById("regCategory").value=category;
- document.getElementById("regMessage").textContent="";
  document.getElementById("regForm").reset();
  document.getElementById("regCategory").value=category;
+ document.getElementById("regMessage").textContent="";
  showSection("registration");
 }
+
 function contactInfo(type){
  closeSettings();
  alert(type==="Chat"
- ?"Chat ka option tayyar hai. Asal messaging chalane ke liye secure backend connect karna hoga."
- :"Call ka option tayyar hai. Asal in-app internet calling ke liye calling service connect karni hogi.");
+ ?"Chat abhi online connect nahi hai. Asal messaging ke liye backend connect karna hoga."
+ :"Call abhi connect nahi hai. Asal in-app calling ke liye calling service connect karni hogi.");
 }
+
 function showCategory(category){
  activeCategory=category;
  document.getElementById("listTitle").textContent=category+" Listings";
  const found=sellers.filter(s=>s.category===category);
  const box=document.getElementById("sellerList");
  box.innerHTML="";
+
  if(!found.length){
  box.innerHTML='<div class="panel">Abhi is category mein registered sellers nahi hain. Settings se registration ki ja sakti hai.</div>';
- }else found.forEach(s=>box.appendChild(sellerCard(s)));
+ }else{
+ found.forEach(s=>box.appendChild(sellerCard(s)));
+ }
  showSection("listing");
 }
+
 function sellerCard(s){
  const el=document.createElement("div");
  el.className="item";
  el.innerHTML=makeImage(s.dp,"🏪")+
  '<div style="min-width:0;flex:1"><h3></h3><p></p><p></p><p></p><button class="green">Products Dekhein</button></div>';
+
  el.querySelector("h3").textContent=s.name;
  el.querySelectorAll("p")[0].textContent="Owner: "+s.owner;
  el.querySelectorAll("p")[1].textContent="City: "+s.city+" · Ilaqah: "+s.area;
@@ -213,49 +247,74 @@ function sellerCard(s){
  el.querySelector("button").onclick=()=>showSeller(s.id);
  return el;
 }
+
 function renderHome(){
  const box=document.getElementById("homeSellers");
  box.innerHTML="";
+
  if(!sellers.length){
  box.innerHTML='<div class="panel">Abhi sellers register nahi hue. Categories chunein ya Settings se registration karein.</div>';
- }else sellers.forEach(s=>box.appendChild(sellerCard(s)));
+ }else{
+ sellers.forEach(s=>box.appendChild(sellerCard(s)));
+ }
 }
+
 function showSeller(id){
  activeSeller=sellers.find(s=>s.id===id);
  if(!activeSeller)return;
+
  const s=activeSeller;
  const d=document.getElementById("sellerDetail");
  d.innerHTML="";
+
  const card=document.createElement("div");
  card.className="panel";
- card.innerHTML=makeImage(s.dp,"🏪")+'<h2></h2><p class="owner"></p><p class="city"></p><p class="area"></p><p class="place"></p><button class="light" onclick="contactInfo(\'Chat\')">💬 Chat</button> <button class="light" onclick="contactInfo(\'Call\')">📞 Call</button>';
+ card.innerHTML=makeImage(s.dp,"🏪")+
+ '<h2></h2><p class="owner"></p><p class="city"></p><p class="area"></p><p class="place"></p><button class="light" onclick="contactInfo(\'Chat\')">💬 Chat</button> <button class="light" onclick="contactInfo(\'Call\')">📞 Call</button>';
+
  card.querySelector("h2").textContent=s.name;
  card.querySelector(".owner").textContent="Owner: "+s.owner;
  card.querySelector(".city").textContent="City: "+s.city;
  card.querySelector(".area").textContent="Ilaqah: "+s.area;
  card.querySelector(".place").textContent="Location: "+s.place+(s.shopNumber?" · Number: "+s.shopNumber:"");
  d.appendChild(card);
+
  const pbox=document.getElementById("productList");
  pbox.innerHTML="";
- if(!s.products.length)pbox.innerHTML='<div class="panel">Abhi products upload nahi ki gayin.</div>';
+
+ if(!s.products.length){
+ pbox.innerHTML='<div class="panel">Abhi products upload nahi ki gayin.</div>';
+ }
+
  s.products.forEach(p=>{
  const row=document.createElement("div");
  row.className="item";
- row.innerHTML=makeImage(p.image,"📦")+'<div style="flex:1"><h3></h3><p class="price"></p><p class="qty"></p></div>';
+ row.innerHTML=makeImage(p.image,"📦")+
+ '<div style="flex:1"><h3></h3><p class="price"></p><p class="qty"></p></div>';
+
  row.querySelector("h3").textContent=p.name;
  row.querySelector(".price").textContent="Rs. "+p.price;
  row.querySelector(".qty").textContent="Quantity: "+(p.quantity||"Not specified");
  pbox.appendChild(row);
  });
+
  showSection("detail");
 }
+
 document.getElementById("regForm").addEventListener("submit",function(e){
  e.preventDefault();
+
  const raw=document.getElementById("productsInput").value.trim();
  const products=raw?raw.split("\n").map(line=>{
  const parts=line.split("|").map(x=>x.trim());
- return {name:parts[0]||"Product",price:parts[1]||"Price not set",quantity:parts[2]||"",image:parts[3]||""};
+ return {
+ name:parts[0]||"Product",
+ price:parts[1]||"Price not set",
+ quantity:parts[2]||"",
+ image:parts[3]||""
+ };
  }).filter(p=>p.name):[];
+
  const seller={
  id:Date.now(),
  category:document.getElementById("regCategory").value,
@@ -268,29 +327,26 @@ document.getElementById("regForm").addEventListener("submit",function(e){
  dp:document.getElementById("dp").value.trim(),
  products
  };
+
  sellers.push(seller);
  save();
- document.getElementById("regMessage").textContent="Is device par registration save ho gayi. Asal online listing ke liye database baad mein connect hoga.";
+ document.getElementById("regMessage").textContent="Registration is device par save ho gayi. Online listing ke liye database baad mein connect hoga.";
  this.reset();
  renderCategories();
  renderHome();
 });
+
 document.getElementById("complaintForm").addEventListener("submit",function(e){
  e.preventDefault();
- complaints.push({text:document.getElementById("complaintText").value,date:new Date().toISOString()});
+ complaints.push({
+ text:document.getElementById("complaintText").value,
+ date:new Date().toISOString()
+ });
  localStorage.setItem("sb_complaints",JSON.stringify(complaints));
  document.getElementById("complaintMessage").textContent="Shikayat is device par save ho gayi. Admin ko bhejne ke liye online service baad mein connect hogi.";
  this.reset();
 });
-function searchAll(){
- const term=document.getElementById("search").value.trim().toLowerCase();
- if(!term){renderHome();return}
- const found=sellers.filter(s=>(s.name+" "+s.category+" "+s.city+" "+s.area+" "+s.owner+" "+s.products.map(p=>p.name).join(" ")).toLowerCase().includes(term));
- const box=document.getElementById("homeSellers");
- box.innerHTML="";
- if(!found.length){box.innerHTML='<div class="panel">Koi matching seller nahi mila.</div>';return}
- found.forEach(s=>box.appendChild(sellerCard(s)));
-}
+
 renderCategories();
 renderHome();
 </script>
