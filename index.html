@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +16,6 @@ button{border:0;border-radius:8px;padding:12px;font-size:15px;cursor:pointer}
 main{padding:18px;max-width:650px;margin:auto}
 .categories{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
 .category{background:white;border:1px solid #ddd;border-radius:12px;padding:25px 8px;text-align:center;font-size:17px;font-weight:bold;min-height:100px}
-.category:active{background:#e3f4e9}
 input,select,textarea{width:100%;padding:12px;margin:7px 0 12px;border:1px solid #ccc;border-radius:7px;font-size:15px}
 .primary{background:#087b43;color:white;width:100%;margin:5px 0}
 .secondary{background:#222;color:white;width:100%;margin:5px 0}
@@ -33,9 +33,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#777}
 <h1>Sassta Bazar</h1>
 <p>Har zaroorat ek bazar</p>
 </header>
-
 <button class="settings" onclick="showPage('settings')">⚙ Settings</button>
-
 <main>
 <section id="home">
 <div class="categories">
@@ -53,7 +51,6 @@ footer{text-align:center;padding:20px;font-size:12px;color:#777}
 <h2 id="categoryTitle"></h2>
 <input id="searchBox" placeholder="Business ya product search karein" oninput="renderProducts()">
 <div id="businessList"></div>
-<div id="productList"></div>
 </section>
 
 <section id="settings" class="hidden">
@@ -66,23 +63,173 @@ footer{text-align:center;padding:20px;font-size:12px;color:#777}
 <section id="login" class="hidden">
 <button onclick="showPage('settings')">← Wapas</button>
 <h2>Business Registration</h2>
-<p class="small">Login buttons abhi demo hain. Asli login Firebase connect hone ke baad chalega.</p>
-<button class="primary" onclick="alert('Google login Firebase connect hone ke baad chalega.')">Continue with Google / Gmail</button>
+<p class="small">Login abhi demo hai. Asli login Firebase ke baad chalega.</p>
+<button class="primary" onclick="alert('Google login Firebase ke baad chalega.')">Continue with Google / Gmail</button>
 <button class="secondary" onclick="alert('Facebook login setup baad mein hoga.')">Continue with Facebook</button>
-<hr>
 <label>Business Category</label>
 <select id="regCategory">
 <option>Company</option><option>Restaurant</option><option>Store / Mart</option><option>Shop</option><option>Home Food</option><option>Accessories</option>
 </select>
-<label>Business Name</label>
-<input id="businessName" placeholder="Business ka naam">
-<label>City</label>
-<input id="city" placeholder="Shehar">
-<label>Jagah ka Naam</label>
-<input id="place" placeholder="Market ya jagah">
-<label>Ilaqa</label>
-<input id="area" placeholder="Ilaqa">
-<label>Mall / Mart / House / Shop Number</label>
-<input id="shopNo" placeholder="Dukan ya ghar ka number">
+<label>Business Name</label><input id="businessName" placeholder="Business ka naam">
+<label>City</label><input id="city" placeholder="Shehar">
+<label>Jagah ka Naam</label><input id="place" placeholder="Market ya jagah">
+<label>Ilaqa</label><input id="area" placeholder="Ilaqa">
+<label>Mall / Mart / House / Shop Number</label><input id="shopNo" placeholder="Dukan ya ghar ka number">
 <button class="primary" onclick="registerBusiness()">Registration Save Karein</button>
-<p class="small">Filhal data isi browser me
+<p class="small">Filhal data isi browser mein save hota hai.</p>
+</section>
+
+<section id="dashboard" class="hidden">
+<button onclick="showPage('home')">Home</button>
+<h2 id="dashTitle">Business Dashboard</h2>
+<div id="dashInfo"></div>
+<h3>Product Add Karein</h3>
+<label>Product Photo</label><input type="file" id="productPhoto" accept="image/*">
+<label>Product Name</label><input id="productName" placeholder="Product ka naam">
+<label>Price (Rs.)</label><input id="productPrice" type="number" min="0" placeholder="Price">
+<label>Quantity / Box</label><input id="productQty" placeholder="1 box, 1 kg, 1 piece">
+<button class="primary" onclick="addProduct()">OK / Add Product</button>
+<h3>Aap ke Products</h3><div id="myProducts"></div>
+<button class="secondary" onclick="showPage('orders')">Orders / Bills</button>
+<button class="secondary" onclick="logout()">Logout</button>
+</section>
+
+<section id="orders" class="hidden">
+<button onclick="showPage('dashboard')">← Dashboard</button>
+<h2>Orders / Bills</h2><div id="orderList"></div>
+</section>
+
+<section id="detail" class="hidden">
+<button onclick="showPage('listing')">← Wapas</button>
+<div id="businessDetail"></div>
+<h3>Products</h3><div id="detailProducts"></div>
+<h3>Order Banayein</h3>
+<label>Aap ka Naam</label><input id="buyerName" placeholder="Naam">
+<label>Payment</label>
+<select id="payment"><option>Cash</option><option>Easypaisa</option><option>JazzCash</option></select>
+<label>Payment Mobile Number (mobile payment ke liye)</label><input id="buyerMobile" inputmode="numeric" placeholder="Mobile number">
+<label>Order ka tareeqa</label>
+<select id="delivery"><option>Khud pickup karunga</option><option>Shop order bhejegi</option><option>Apna rider bhejunga</option></select>
+<h3 id="billTotal">Total: Rs. 0</h3>
+<button class="primary" onclick="placeOrder()">Order Confirm Karein</button>
+</section>
+
+<section id="complaint" class="hidden">
+<button onclick="showPage('settings')">← Wapas</button>
+<h2>Shikayat Box</h2>
+<input id="complaintTitle" placeholder="Shikayat ka unwan">
+<textarea id="complaintText" rows="5" placeholder="Apni shikayat likhein"></textarea>
+<button class="primary" onclick="saveComplaint()">Shikayat Save Karein</button>
+<p class="small">Online owner tak bhejne ke liye Firebase connect karna hoga.</p>
+</section>
+</main>
+<footer>Sassta Bazar Pakistan</footer>
+
+<script>
+const get=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let sellers=get('sb_sellers'),complaints=get('sb_complaints'),orders=get('sb_orders');
+let currentSeller=null,currentCategory='',selectedBusiness=null,cart={};
+
+function showPage(id){
+ document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+ if(id==='dashboard')renderDashboard();
+ if(id==='orders')renderOrders();
+ if(id==='listing')renderProducts();
+ window.scrollTo(0,0);
+}
+function openCategory(name){
+ currentCategory=name;document.getElementById('categoryTitle').textContent=name;
+ document.getElementById('searchBox').value='';showPage('listing');
+}
+function registerBusiness(){
+ const name=document.getElementById('businessName').value.trim();
+ const city=document.getElementById('city').value.trim();
+ const place=document.getElementById('place').value.trim();
+ const area=document.getElementById('area').value.trim();
+ const shopNo=document.getElementById('shopNo').value.trim();
+ if(!name||!city||!place||!area||!shopNo){alert('Tamam fields bharein.');return}
+ currentSeller={id:Date.now(),category:document.getElementById('regCategory').value,name,city,place,area,shopNo,products:[]};
+ sellers.push(currentSeller);save('sb_sellers',sellers);
+ alert('Business browser mein save ho gaya. Login abhi asli nahi hai.');
+ showPage('dashboard');
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderProducts(){
+ const q=(document.getElementById('searchBox')?.value||'').toLowerCase();
+ const list=sellers.filter(s=>s.category===currentCategory&&(s.name+' '+s.city+' '+s.place+' '+s.area+' '+s.products.map(p=>p.name).join(' ')).toLowerCase().includes(q));
+ document.getElementById('businessList').innerHTML=list.map(s=>`<div class="card"><b>${esc(s.name)}</b><p>${esc(s.city)} · ${esc(s.place)} · ${esc(s.area)}</p><p class="small">${esc(s.shopNo)}</p><button class="primary" onclick="openBusiness(${s.id})">Business Dekhein</button></div>`).join('')||'<p class="small">Abhi koi business registered nahi hai.</p>';
+}
+function openBusiness(id){
+ selectedBusiness=sellers.find(s=>s.id===id);if(!selectedBusiness)return;
+ cart={};document.getElementById('businessDetail').innerHTML=`<div class="card"><h2>${esc(selectedBusiness.name)}</h2><p>${esc(selectedBusiness.city)} · ${esc(selectedBusiness.place)} · ${esc(selectedBusiness.area)}</p><p>${esc(selectedBusiness.shopNo)}</p></div>`;
+ renderDetailProducts();showPage('detail');
+}
+function renderDetailProducts(){
+ document.getElementById('detailProducts').innerHTML=(selectedBusiness.products||[]).map((p,i)=>`<div class="card product">${p.photo?`<img src="${p.photo}" alt="">`:'<div style="width:90px;height:90px;background:#eee"></div>'}<div><b>${esc(p.name)}</b><p>Rs. ${p.price}</p><p class="small">${esc(p.qty)}</p><input type="number" min="0" value="${cart[i]||0}" onchange="setCart(${i},this.value)" placeholder="Quantity"></div></div>`).join('')||'<p>Products abhi add nahi hue.</p>';
+ updateBill();
+}
+function setCart(i,v){cart[i]=Math.max(0,Number(v)||0);updateBill()}
+function updateBill(){
+ if(!selectedBusiness)return;
+ let total=0;selectedBusiness.products.forEach((p,i)=>total+=(Number(p.price)||0)*(cart[i]||0));
+ document.getElementById('billTotal').textContent='Total: Rs. '+total;
+}
+function placeOrder(){
+ if(!selectedBusiness)return;
+ const items=selectedBusiness.products.map((p,i)=>({name:p.name,price:Number(p.price),qty:cart[i]||0})).filter(p=>p.qty>0);
+ if(!items.length){alert('Product quantity select karein.');return}
+ const name=document.getElementById('buyerName').value.trim(),payment=document.getElementById('payment').value,mobile=document.getElementById('buyerMobile').value.trim();
+ if(!name){alert('Apna naam likhein.');return}
+ if(payment!=='Cash'&&!mobile){alert('Payment mobile number likhein.');return}
+ const total=items.reduce((n,p)=>n+p.price*p.qty,0);
+ orders.push({id:Date.now(),businessId:selectedBusiness.id,business:selectedBusiness.name,buyer:name,mobile:payment==='Cash'?'':mobile,payment,delivery:document.getElementById('delivery').value,items,total,date:new Date().toLocaleString()});
+ save('sb_orders',orders);alert('Test order isi browser mein save ho gaya. Shop ko online nahi bheja gaya.');showPage('home');
+}
+function addProduct(){
+ if(!currentSeller){alert('Pehle registration karein.');return}
+ const name=document.getElementById('productName').value.trim(),price=document.getElementById('productPrice').value,qty=document.getElementById('productQty').value.trim(),file=document.getElementById('productPhoto').files[0];
+ if(!name||price===''||Number(price)<0||!qty){alert('Product name, price aur quantity bharein.');return}
+ const finish=photo=>{
+ currentSeller.products.push({id:Date.now(),name,price:Number(price),qty,photo:photo||''});
+ sellers=sellers.map(s=>s.id===currentSeller.id?currentSeller:s);save('sb_sellers',sellers);
+ document.getElementById('productName').value='';document.getElementById('productPrice').value='';document.getElementById('productQty').value='';document.getElementById('productPhoto').value='';
+ renderDashboard();alert('Product save ho gaya.');
+ };
+ if(file){
+ if(file.size>1500000){alert('Photo 1.5 MB se chhoti rakhein.');return}
+ const reader=new FileReader();reader.onload=()=>finish(reader.result);reader.readAsDataURL(file);
+ }else finish('');
+}
+function renderDashboard(){
+ if(!currentSeller)return;
+ document.getElementById('dashTitle').textContent=currentSeller.name+' Dashboard';
+ document.getElementById('dashInfo').innerHTML=`<div class="card">${esc(currentSeller.category)}<br>${esc(currentSeller.city)} · ${esc(currentSeller.area)}<br>${esc(currentSeller.place)} · ${esc(currentSeller.shopNo)}</div>`;
+ document.getElementById('myProducts').innerHTML=currentSeller.products.map((p,i)=>`<div class="card product">${p.photo?`<img src="${p.photo}" alt="">`:'<div style="width:90px;height:90px;background:#eee"></div>'}<div><b>${esc(p.name)}</b><p>Rs. ${p.price} · ${esc(p.qty)}</p><button onclick="editProduct(${i})">Price / Edit</button> <button onclick="deleteProduct(${i})">Delete</button></div></div>`).join('')||'<p class="small">Abhi koi product add nahi hua.</p>';
+}
+function editProduct(i){
+ const p=currentSeller.products[i],price=prompt('Nayi price',p.price);
+ if(price===null||price.trim()===''||!Number.isFinite(Number(price))||Number(price)<0)return;
+ const qty=prompt('Quantity / box',p.qty);if(qty===null)return;
+ p.price=Number(price);p.qty=qty.trim();sellers=sellers.map(s=>s.id===currentSeller.id?currentSeller:s);save('sb_sellers',sellers);renderDashboard();
+}
+function deleteProduct(i){
+ if(!confirm('Product delete karna hai?'))return;
+ currentSeller.products.splice(i,1);sellers=sellers.map(s=>s.id===currentSeller.id?currentSeller:s);save('sb_sellers',sellers);renderDashboard();
+}
+function renderOrders(){
+ const mine=currentSeller?orders.filter(o=>o.businessId===currentSeller.id):[];
+ document.getElementById('orderList').innerHTML=mine.map(o=>`<div class="card"><b>Bill #${o.id}</b><p>${esc(o.date)}</p><p>Customer: ${esc(o.buyer)}</p><p>Payment: ${esc(o.payment)}</p><p>Total: Rs. ${o.total}</p><p>${o.items.map(p=>esc(p.name)+' × '+p.qty).join(', ')}</p></div>`).join('')||'<p class="small">Koi order nahi mila.</p>';
+}
+function saveComplaint(){
+ const title=document.getElementById('complaintTitle').value.trim(),message=document.getElementById('complaintText').value.trim();
+ if(!title||!message){alert('Shikayat ki tamam tafseel likhein.');return}
+ complaints.push({title,message,date:new Date().toLocaleString()});save('sb_complaints',complaints);
+ document.getElementById('complaintTitle').value='';document.getElementById('complaintText').value='';
+ alert('Shikayat browser mein save ho gayi. Owner ko online bhejne ke liye Firebase chahiye.');showPage('home');
+}
+function logout(){currentSeller=null;showPage('home')}
+</script>
+</body>
+</html>
