@@ -1,414 +1,88 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sassta Bazar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sassta Bazar Pakistan</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#edf4ee;color:#202820}
-header{background:#0e9f5b;color:white;padding:18px 12px;text-align:center;position:sticky;top:0;z-index:5}
-header h2{margin:0 0 6px}
-header p{margin:0}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.topbtn{position:absolute;right:12px;top:17px;background:#ffffff30;border:0;border-radius:12px;padding:12px;color:white}
-main{max-width:850px;margin:auto;padding:14px}
-h3{margin-top:8px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.category{padding:0;border:0;border-radius:20px;overflow:hidden;background:white;box-shadow:0 4px 15px #0001;text-align:center;color:#202820}
-.catpic{height:125px;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#ccebd8,#eaf4ed)}
-.category strong{display:block;padding:15px 5px;font-size:18px}
-.panel{background:white;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px #0000000c}
-.item{display:flex;gap:12px;align-items:center;background:white;padding:12px;border-radius:15px;margin-bottom:12px}
-.avatar{width:88px;height:88px;flex-shrink:0;object-fit:cover;border-radius:12px;background:#e3eee6;display:flex;align-items:center;justify-content:center;font-size:35px}
-.item h3{margin:0 0 7px}
-.item p{font-size:14px;color:#59665d;margin:5px 0;overflow-wrap:anywhere}
-.green{background:#0e9f5b;color:white;border:0;border-radius:10px;padding:11px 14px}
-.light{background:#edf4ee;color:#17633d;border:0;border-radius:10px;padding:11px 14px}
-.full{width:100%;margin-top:8px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #d5ddd7;border-radius:10px;margin:5px 0 12px;background:white}
-label{font-size:14px;font-weight:bold}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f5f7;color:#222}
+header{background:#087b43;color:white;padding:18px;text-align:center}
+header h1{margin:0;font-size:26px}
+header p{margin:6px 0 0;font-size:13px}
+button{border:0;border-radius:8px;padding:12px;font-size:15px;cursor:pointer}
+.settings{position:fixed;right:12px;top:12px;background:#222;color:white;z-index:5}
+main{padding:18px;max-width:650px;margin:auto}
+.categories{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.category{background:white;border:1px solid #ddd;border-radius:12px;padding:25px 8px;text-align:center;font-size:17px;font-weight:bold;min-height:100px}
+.category:active{background:#e3f4e9}
+input,select,textarea{width:100%;padding:12px;margin:7px 0 12px;border:1px solid #ccc;border-radius:7px;font-size:15px}
+.primary{background:#087b43;color:white;width:100%;margin:5px 0}
+.secondary{background:#222;color:white;width:100%;margin:5px 0}
+.card{background:white;padding:15px;margin:12px 0;border-radius:10px;border:1px solid #ddd}
+.product{display:flex;gap:12px;align-items:center}
+.product img{width:90px;height:90px;object-fit:cover;border-radius:8px;background:#eee}
+.small{font-size:13px;color:#666}
 .hidden{display:none!important}
-.back{border:0;background:transparent;color:#147d48;font-weight:bold;padding:8px 0 15px}
-.price{font-size:18px;color:#087c43;font-weight:bold}
-#settings{position:fixed;inset:0;background:#0007;z-index:10;display:none}
-.drawer{position:absolute;right:0;top:0;height:100%;width:min(88%,420px);overflow:auto;background:white;padding:20px}
-.drawer h2{margin-top:5px}
-.settingbtn{display:block;width:100%;text-align:left;padding:16px;margin:9px 0;border:0;border-radius:13px;background:#f2f3f2;font-weight:bold}
-.loginbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;margin:10px 0;border:1px solid #d5ddd7;border-radius:12px;background:white;font-weight:bold;font-size:16px}
-.google-mark{font-weight:bold;font-size:20px;color:#4285f4}
-.facebook-mark{display:inline-flex;align-items:center;justify-content:center;background:#1877f2;color:white;border-radius:50%;width:23px;height:23px;font-weight:bold;font-size:19px}
-.photo-preview{width:100%;max-width:180px;max-height:180px;object-fit:cover;border-radius:12px;display:block;margin:4px 0 12px}
-footer{text-align:center;color:#66736a;font-size:12px;padding:10px}
-.note{font-size:13px;color:#66736a;line-height:1.45}
+h2{font-size:21px}
+footer{text-align:center;padding:20px;font-size:12px;color:#777}
 </style>
 </head>
 <body>
 <header>
-<h2>Sassta Bazar</h2>
+<h1>Sassta Bazar</h1>
 <p>Har zaroorat ek bazar</p>
-<button class="topbtn" onclick="openSettings()">⚙️</button>
 </header>
+
+<button class="settings" onclick="showPage('settings')">⚙ Settings</button>
 
 <main>
 <section id="home">
-<h3>Apni pasand ka bazar chunein</h3>
-<div class="grid" id="categories"></div>
+<div class="categories">
+<button class="category" onclick="openCategory('Company')">🏢<br>Company</button>
+<button class="category" onclick="openCategory('Restaurant')">🍽️<br>Restaurant</button>
+<button class="category" onclick="openCategory('Store / Mart')">🛒<br>Store / Mart</button>
+<button class="category" onclick="openCategory('Shop')">🏪<br>Shop</button>
+<button class="category" onclick="openCategory('Home Food')">🍲<br>Home Food</button>
+<button class="category" onclick="openCategory('Accessories')">🎒<br>Accessories</button>
+</div>
 </section>
 
 <section id="listing" class="hidden">
-<button class="back" onclick="goHome()">← Wapas</button>
-<h2 id="listTitle"></h2>
-<p>Apne shehar aur ilaqay ki registered listings dekhein.</p>
-<div id="sellerList"></div>
-</section>
-
-<section id="detail" class="hidden">
-<button class="back" onclick="goListing()">← Wapas</button>
-<div id="sellerDetail"></div>
-<h3>Products aur Prices</h3>
+<button onclick="showPage('home')">← Wapas</button>
+<h2 id="categoryTitle"></h2>
+<input id="searchBox" placeholder="Business ya product search karein" oninput="renderProducts()">
+<div id="businessList"></div>
 <div id="productList"></div>
 </section>
 
-<section id="login" class="hidden">
-<button class="back" onclick="goHome()">← Home</button>
-<div class="panel">
-<h2>Registration Login</h2>
-<p>Apna account continue karne ka tareeqa chunein.</p>
-<button class="loginbtn" type="button" onclick="demoLogin('Google / Gmail')"><span class="google-mark">G</span> Google se Continue</button>
-<button class="loginbtn" type="button" onclick="demoLogin('Facebook')"><span class="facebook-mark">f</span> Facebook se Continue</button>
-<p class="note">Abhi buttons demo hain aur registration kholte hain. Asli Google/Facebook account verification Firebase connect hone ke baad chalegi.</p>
-</div>
-</section>
-
-<section id="registration" class="hidden">
-<button class="back" onclick="showSection('login')">← Wapas</button>
-<h2>Seller Registration</h2>
-<p>Apni business ki sahi details bharein.</p>
-<form id="regForm">
-<label>Business ka naam</label>
-<input id="shopName" required placeholder="Business ya shop ka naam">
-<label>City ka naam</label>
-<input id="city" required placeholder="Misal: Karachi">
-<label>Jagah ka naam</label>
-<input id="place" required placeholder="Mall, market ya jagah ka naam">
-<label>Ilaqa ka naam</label>
-<input id="area" required placeholder="Misal: Gulshan">
-<label>Mall / Mart / House / Shop number</label>
-<input id="shopNumber" placeholder="Number agar ho">
-<label>Business ki category</label>
-<select id="regCategory" required></select>
-<button class="green full" type="submit">Registration Save Karein</button>
-</form>
-<p id="regMessage" class="note"></p>
-</section>
-
-<section id="dashboard" class="hidden">
-<button class="back" onclick="goHome()">← Home</button>
-<div class="panel">
-<h2>Seller Dashboard</h2>
-<p id="dashboardName"></p>
-<button class="light" type="button" onclick="logoutSeller()">Logout</button>
-</div>
-<div class="panel">
-<h3>Product Upload Karein</h3>
-<form id="productForm">
-<label>Product ka naam</label>
-<input id="productName" required placeholder="Product ka naam">
-<label>Price (Rs.)</label>
-<input id="productPrice" required type="number" min="0" placeholder="Product ki price">
-<label>Quantity / Box</label>
-<input id="productQuantity" placeholder="Misal: 1 box, 1 kg">
-<label>Product ki photo (mobile gallery se)</label>
-<input id="productImageFile" type="file" accept="image/*" capture="environment">
-<img id="productPreview" class="photo-preview hidden" alt="Product photo preview">
-<p class="note">Gallery se apni asli product photo select karein. Har product ki photo alag upload karein.</p>
-<button class="green full" type="submit">OK / Add Product</button>
-</form>
-<p class="note">Abhi products isi device par save hoti hain. Sab customers ko online dikhane ke liye Firebase baad mein connect hoga.</p>
-</div>
-<h3>Aapki Products</h3>
-<div id="myProducts"></div>
-</section>
-
-<section id="complaint" class="hidden">
-<button class="back" onclick="goHome()">← Home</button>
-<h2>Shikayat Box</h2>
-<form id="complaintForm">
-<label>Shikayat ki tafseel</label>
-<textarea id="complaintText" required rows="5" placeholder="Apni shikayat likhein"></textarea>
-<button class="green full" type="submit">Shikayat Save Karein</button>
-</form>
-<p id="complaintMessage" class="note"></p>
-</section>
-</main>
-
-<div id="settings">
-<div class="drawer">
-<button class="light" onclick="closeSettings()">✕ Band karein</button>
+<section id="settings" class="hidden">
+<button onclick="showPage('home')">← Wapas</button>
 <h2>Settings</h2>
-<button class="settingbtn" onclick="startRegistration()">Registration</button>
-<button class="settingbtn" onclick="openSection('complaint')">Shikayat Box</button>
-</div>
-</div>
+<button class="primary" onclick="showPage('login')">Registration</button>
+<button class="secondary" onclick="showPage('complaint')">Shikayat Box</button>
+</section>
 
-<footer>Sassta Bazar · Pakistan</footer>
-
-<script>
-const categories=[
-{name:"Company",icon:"🏢"},
-{name:"Restaurant",icon:"🍽️"},
-{name:"Store / Mart",icon:"🛒"},
-{name:"Shop",icon:"🏬"},
-{name:"Home Food",icon:"🍲"},
-{name:"Accessories",icon:"👜"}
-];
-
-let activeCategory="";
-let activeSeller=null;
-let currentSellerId=null;
-let selectedProductImage="";
-let sellers=load("sb_sellers",[]);
-let complaints=load("sb_complaints",[]);
-
-function load(key,fallback){
- try{return JSON.parse(localStorage.getItem(key))||fallback}
- catch(e){return fallback}
-}
-function save(){
- localStorage.setItem("sb_sellers",JSON.stringify(sellers));
-}
-function safeImage(url){
- return typeof url==="string"&&/^https?:\/\//i.test(url);
-}
-function makeImage(url,icon){
- if(safeImage(url)){
- const img=document.createElement("img");
- img.className="avatar";
- img.src=url;
- img.alt="Photo";
- return img.outerHTML;
- }
- return '<div class="avatar">'+icon+'</div>';
-}
-function renderCategories(){
- document.getElementById("categories").innerHTML=categories.map(c=>
- '<button class="category" onclick="showCategory('+JSON.stringify(c.name)+')"><div class="catpic">'+c.icon+'</div><strong>'+c.name+'</strong></button>'
- ).join("");
- document.getElementById("regCategory").innerHTML='<option value="">Category chunein</option>'+categories.map(c=>
- '<option value="'+c.name+'">'+c.name+'</option>').join("");
-}
-function showSection(id){
- ["home","listing","detail","login","registration","dashboard","complaint"].forEach(s=>
- document.getElementById(s).classList.toggle("hidden",s!==id));
- window.scrollTo(0,0);
-}
-function openSettings(){
- document.getElementById("settings").style.display="block";
-}
-function closeSettings(){
- document.getElementById("settings").style.display="none";
-}
-function openSection(id){
- closeSettings();
- showSection(id);
-}
-function goHome(){showSection("home")}
-function goListing(){showCategory(activeCategory)}
-function startRegistration(){
- closeSettings();
- document.getElementById("regMessage").textContent="";
- showSection("login");
-}
-function demoLogin(provider){
- document.getElementById("regForm").reset();
- document.getElementById("regMessage").textContent="";
- showSection("registration");
-}
-function showCategory(category){
- activeCategory=category;
- document.getElementById("listTitle").textContent=category+" Listings";
- const found=sellers.filter(s=>s.category===category);
- const box=document.getElementById("sellerList");
- box.innerHTML="";
- if(!found.length){
- box.innerHTML='<div class="panel">Abhi is category mein registered sellers nahi hain.</div>';
- }else{
- found.forEach(s=>box.appendChild(sellerCard(s)));
- }
- showSection("listing");
-}
-function sellerCard(s){
- const el=document.createElement("div");
- el.className="item";
- el.innerHTML=makeImage(s.dp,"🏪")+
- '<div style="min-width:0;flex:1"><h3></h3><p></p><p></p><p></p><button class="green">Products Dekhein</button></div>';
- el.querySelector("h3").textContent=s.name;
- el.querySelectorAll("p")[0].textContent="Category: "+s.category;
- el.querySelectorAll("p")[1].textContent="City: "+s.city+" · Ilaqa: "+s.area;
- el.querySelectorAll("p")[2].textContent="Location: "+s.place;
- el.querySelector("button").onclick=()=>showSeller(s.id);
- return el;
-}
-function showSeller(id){
- activeSeller=sellers.find(s=>s.id===id);
- if(!activeSeller)return;
- const s=activeSeller;
- const d=document.getElementById("sellerDetail");
- d.innerHTML="";
- const card=document.createElement("div");
- card.className="panel";
- card.innerHTML=makeImage(s.dp,"🏪")+
- '<h2></h2><p class="categoryText"></p><p class="city"></p><p class="area"></p><p class="place"></p>';
- card.querySelector("h2").textContent=s.name;
- card.querySelector(".categoryText").textContent="Category: "+s.category;
- card.querySelector(".city").textContent="City: "+s.city;
- card.querySelector(".area").textContent="Ilaqa: "+s.area;
- card.querySelector(".place").textContent="Location: "+s.place+(s.shopNumber?" · Number: "+s.shopNumber:"");
- d.appendChild(card);
- const pbox=document.getElementById("productList");
- pbox.innerHTML="";
- if(!s.products.length)pbox.innerHTML='<div class="panel">Abhi products upload nahi ki gayin.</div>';
- s.products.forEach(p=>{
- const row=document.createElement("div");
- row.className="item";
- row.innerHTML=makeImage(p.image,"📦")+
- '<div style="flex:1"><h3></h3><p class="price"></p><p class="qty"></p></div>';
- row.querySelector("h3").textContent=p.name;
- row.querySelector(".price").textContent="Rs. "+p.price;
- row.querySelector(".qty").textContent="Quantity: "+(p.quantity||"Not specified");
- pbox.appendChild(row);
- });
- showSection("detail");
-}
-document.getElementById("regForm").addEventListener("submit",function(e){
- e.preventDefault();
- const seller={
- id:Date.now(),
- category:document.getElementById("regCategory").value,
- name:document.getElementById("shopName").value.trim(),
- city:document.getElementById("city").value.trim(),
- area:document.getElementById("area").value.trim(),
- place:document.getElementById("place").value.trim(),
- shopNumber:document.getElementById("shopNumber").value.trim(),
- dp:"",
- products:[]
- };
- sellers.push(seller);
- save();
- currentSellerId=seller.id;
- document.getElementById("regMessage").textContent="";
- this.reset();
- showDashboard();
-});
-function showDashboard(){
- const s=sellers.find(x=>x.id===currentSellerId);
- if(!s){showSection("home");return}
- document.getElementById("dashboardName").textContent=s.name+" · "+s.category;
- renderMyProducts();
- showSection("dashboard");
-}
-function renderMyProducts(){
- const s=sellers.find(x=>x.id===currentSellerId);
- const box=document.getElementById("myProducts");
- box.innerHTML="";
- if(!s||!s.products.length){
- box.innerHTML='<div class="panel">Abhi aap ne koi product add nahi ki.</div>';
- return;
- }
- s.products.forEach((p,index)=>{
- const row=document.createElement("div");
- row.className="item";
- row.innerHTML=makeImage(p.image,"📦")+
- '<div style="flex:1;min-width:0"><h3></h3><p class="price"></p><p class="qty"></p><button class="light">Delete</button></div>';
- row.querySelector("h3").textContent=p.name;
- row.querySelector(".price").textContent="Rs. "+p.price;
- row.querySelector(".qty").textContent="Quantity: "+(p.quantity||"Not specified");
- row.querySelector("button").onclick=()=>deleteProduct(index);
- box.appendChild(row);
- });
-}
-function compressProductPhoto(file){
- return new Promise((resolve,reject)=>{
-  if(!file||!file.type.startsWith("image/")){reject(new Error("Photo select karein."));return}
-  const reader=new FileReader();
-  reader.onload=()=>{
-   const img=new Image();
-   img.onload=()=>{
-    const max=800;
-    const scale=Math.min(1,max/Math.max(img.width,img.height));
-    const canvas=document.createElement("canvas");
-    canvas.width=Math.max(1,Math.round(img.width*scale));
-    canvas.height=Math.max(1,Math.round(img.height*scale));
-    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
-    resolve(canvas.toDataURL("image/jpeg",0.72));
-   };
-   img.onerror=()=>reject(new Error("Photo open nahi ho saki."));
-   img.src=reader.result;
-  };
-  reader.onerror=()=>reject(new Error("Photo read nahi ho saki."));
-  reader.readAsDataURL(file);
- });
-}
-document.getElementById("productImageFile").addEventListener("change",async function(){
- const preview=document.getElementById("productPreview");
- selectedProductImage="";
- preview.classList.add("hidden");
- if(!this.files||!this.files[0])return;
- try{
-  selectedProductImage=await compressProductPhoto(this.files[0]);
-  preview.src=selectedProductImage;
-  preview.classList.remove("hidden");
- }catch(error){alert(error.message);this.value="";}
-});
-document.getElementById("productForm").addEventListener("submit",function(e){
- e.preventDefault();
- const s=sellers.find(x=>x.id===currentSellerId);
- if(!s)return;
- const product={
-  name:document.getElementById("productName").value.trim(),
-  price:document.getElementById("productPrice").value,
-  quantity:document.getElementById("productQuantity").value.trim(),
-  image:selectedProductImage
- };
- s.products.push(product);
- try{
-  save();
-  this.reset();
-  selectedProductImage="";
-  document.getElementById("productPreview").removeAttribute("src");
-  document.getElementById("productPreview").classList.add("hidden");
-  renderMyProducts();
-  alert("Product save ho gaya. Ab agla product add kar sakte hain.");
- }catch(error){
-  s.products.pop();
-  alert("Phone browser ki storage bhar gayi. Chhoti photo select karein. Online photos ke liye baad mein Firebase Storage connect karenge.");
- }
-});
-function deleteProduct(index){
- const s=sellers.find(x=>x.id===currentSellerId);
- if(!s)return;
- s.products.splice(index,1);
- save();
- renderMyProducts();
-}
-function logoutSeller(){
- currentSellerId=null;
- showSection("home");
-}
-document.getElementById("complaintForm").addEventListener("submit",function(e){
- e.preventDefault();
- complaints.push({
- text:document.getElementById("complaintText").value.trim(),
- date:new Date().toISOString()
- });
- localStorage.setItem("sb_complaints",JSON.stringify(complaints));
- document.getElementById("complaintMessage").textContent="Shikayat is device par save ho gayi. Admin tak bhejne ke liye online service baad mein connect hogi.";
- this.reset();
-});
-renderCategories();
-</script>
-</body>
-</html>
+<section id="login" class="hidden">
+<button onclick="showPage('settings')">← Wapas</button>
+<h2>Business Registration</h2>
+<p class="small">Login buttons abhi demo hain. Asli login Firebase connect hone ke baad chalega.</p>
+<button class="primary" onclick="alert('Google login Firebase connect hone ke baad chalega.')">Continue with Google / Gmail</button>
+<button class="secondary" onclick="alert('Facebook login setup baad mein hoga.')">Continue with Facebook</button>
+<hr>
+<label>Business Category</label>
+<select id="regCategory">
+<option>Company</option><option>Restaurant</option><option>Store / Mart</option><option>Shop</option><option>Home Food</option><option>Accessories</option>
+</select>
+<label>Business Name</label>
+<input id="businessName" placeholder="Business ka naam">
+<label>City</label>
+<input id="city" placeholder="Shehar">
+<label>Jagah ka Naam</label>
+<input id="place" placeholder="Market ya jagah">
+<label>Ilaqa</label>
+<input id="area" placeholder="Ilaqa">
+<label>Mall / Mart / House / Shop Number</label>
+<input id="shopNo" placeholder="Dukan ya ghar ka number">
+<button class="primary" onclick="registerBusiness()">Registration Save Karein</button>
+<p class="small">Filhal data isi browser me
