@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sassta Bazar</title>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#edf4ee;color:#202820}
+header{background:#0e9f5b;color:white;padding:5px 10px;text-align:center;position:sticky;top:0;z-index:5;min-height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+header h2{margin:0 0 2px;font-size:16px}header p{margin:0;font-size:11px}
+.header-back{display:none;position:absolute;left:8px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:white;font-weight:bold;padding:6px 4px;font-size:13px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#ffffff30;border:0;border-radius:9px;padding:5px 7px;color:white}
+main{max-width:850px;margin:auto;padding:10px}
+h3{margin-top:8px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.category{padding:0;border:0;border-radius:20px;overflow:hidden;background:white;box-shadow:0 4px 15px #0001;text-align:center;color:#202820}
+.catpic{height:clamp(150px,24vh,220px);display:block;overflow:hidden;background:#dcece1}
+.catpic img{width:100%;height:100%;object-fit:cover;display:block}
+.category strong{display:block;padding:15px 5px;font-size:18px;background:#fff}
+.panel{background:white;border-radius:13px;padding:10px;margin-bottom:10px;box-shadow:0 3px 12px #0000000c}
+.item{display:flex;gap:10px;align-items:center;background:white;padding:9px;border-radius:13px;margin-bottom:9px}
+.avatar{width:68px;height:68px;flex-shrink:0;object-fit:cover;border-radius:12px;background:#e3eee6;display:flex;align-items:center;justify-content:center;font-size:28px}
+.item h3{margin:0 0 6px}.item p{font-size:13px;color:#59665d;margin:5px 0;overflow-wrap:anywhere}
+.green{background:#0e9f5b;color:white;border:0;border-radius:9px;padding:9px 11px}
+.light{background:#edf4ee;color:#17633d;border:0;border-radius:9px;padding:9px 11px}
+.full{width:100%;margin-top:8px}input,select,textarea{width:100%;padding:11px;border:1px solid #d5ddd7;border-radius:9px;margin:5px 0 12px;background:white}
+label{font-size:13px;font-weight:bold}#regCategory{display:none}.hidden{display:none!important}
+.back{border:0;background:#e2f1e7;color:#147d48;font-weight:bold;padding:6px 8px;border-radius:8px;font-size:12px}
+.search-row>.back,.profile-head>.back,body>main>section>.back{display:none}
+.price{font-size:17px;color:#087c43;font-weight:bold}
+#settings{position:fixed;inset:0;background:#0007;z-index:10;display:none}
+.drawer{position:absolute;right:0;top:0;height:100%;width:min(88%,420px);overflow:auto;background:white;padding:18px}
+.drawer h2{margin-top:5px}.settingbtn,.registration-option{display:block;width:100%;text-align:left;padding:15px;margin:9px 0;border:0;border-radius:12px;background:#f2f3f2;font-weight:bold}
+.registration-option{background:white;box-shadow:0 3px 12px #0000000c;color:#17633d;font-size:15px}
+.loginbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;margin:10px 0;border:1px solid #d5ddd7;border-radius:12px;background:white;font-weight:bold;font-size:15px}
+.google-mark{font-weight:bold;font-size:20px;color:#4285f4}.facebook-mark{display:inline-flex;align-items:center;justify-content:center;background:#1877f2;color:white;border-radius:50%;width:23px;height:23px;font-weight:bold;font-size:19px}
+.photo-preview{width:100%;max-width:110px;max-height:110px;object-fit:cover;border-radius:10px;display:block;margin:4px 0 10px}
+.profile-buttons{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}.profile-buttons button{flex:1;margin-top:0;padding:7px 5px;font-size:12px}
+footer{text-align:center;color:#66736a;font-size:12px;padding:10px}.note{font-size:12px;color:#66736a;line-height:1.4}
+.search-row{display:flex;align-items:center;gap:6px;width:100%;margin:8px 0}
+.search-row input{flex:1;min-width:0;width:auto;margin:0;padding:8px;font-size:13px}.search-row .search-btn{flex:0 0 auto;padding:8px;font-size:12px}
+.profile-card{padding:7px;text-align:left}.profile-top{display:flex;gap:7px;align-items:center}
+.profile-photo,.profile-placeholder{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#e3eee6}
+.profile-placeholder{display:flex;align-items:center;justify-content:center;font-size:21px}
+.profile-info{min-width:0;flex:1}.profile-info h2{font-size:15px;margin:0 0 3px;overflow-wrap:anywhere}.profile-info p{font-size:11px;color:#66736a;margin:0}
+.bio-toggle{display:block;border:0;background:transparent;text-align:left;padding:5px 0;color:#34463a;width:100%;line-height:1.35;overflow-wrap:anywhere;white-space:pre-wrap;font-size:12px}
+.profile-actions{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
+.profile-actions button{padding:6px 8px;font-size:12px;min-width:0}.profile-actions .iconbtn{font-size:17px;padding:4px 7px}
+.profile-actions .followed{background:#dcece1;color:#17633d}
+.follow-count{font-size:11px;color:#17633d;background:#edf4ee;padding:5px 7px;border-radius:7px;display:inline-block}
+.offer-text{background:#fff4d8;color:#77500b;border-radius:8px;padding:7px;margin-top:7px;font-size:12px}
+.product-tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.product-tools button{font-size:12px;padding:7px 9px}
+.profile-head{display:flex;align-items:center;gap:7px;margin-bottom:7px}.profile-head .back{flex-shrink:0}.profile-head .spacer{flex:1}
+#messengerModal,#cartModal{position:fixed;inset:0;background:#edf4ee;z-index:20;display:none;align-items:stretch;justify-content:stretch;padding:0}
+#messengerModal .modal-card,#cartModal .modal-card{background:white;border-radius:0;padding:12px;width:100%;max-width:none;height:100dvh;overflow-y:auto;display:flex;flex-direction:column}
+#messengerModal .profile-head,#cartModal .profile-head{position:sticky;top:0;background:white;padding:8px 0;z-index:2;border-bottom:1px solid #e2eae4}
+#messengerModal .profile-head .back,#cartModal .profile-head .back{display:block;position:static;font-size:18px;min-width:36px;min-height:36px}
+#messengerMessages{flex:1;min-height:150px;overflow-y:auto;margin:10px 0;padding:8px;background:#f4f8f5;border-radius:10px}
+.messenger-message{max-width:85%;width:fit-content;background:#dcece1;padding:9px 12px;border-radius:12px;margin:7px 0;overflow-wrap:anywhere}
+.messenger-message.mine{margin-left:auto;background:#d6eaff}
+.messenger-message img{display:block;max-width:190px;max-height:220px;object-fit:contain;margin-top:5px;border-radius:8px}
+.message-tools{display:flex;gap:7px;margin-top:6px;align-items:center;flex-wrap:wrap}
+.message-tools button{font-size:10px;padding:4px 6px}
+#messengerExtra{margin-top:auto;background:white;padding-top:6px}
+#chatText{min-height:48px;resize:vertical;margin-bottom:4px}
+.chat-compose{display:flex;gap:6px;align-items:center}.chat-compose button{flex-shrink:0}
+.chat-compose .green{min-width:65px}
+.messenger-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.messenger-options button{padding:10px 4px;font-size:13px;min-height:48px}
+.inbox-row{padding:12px;border-bottom:1px solid #e3ebe5;background:white;cursor:pointer}
+.inbox-row strong{display:block}.inbox-row small{color:#66736a}
+.bottom-actions{position:fixed;bottom:0;left:0;right:0;z-index:8;background:white;border-top:1px solid #dce7df;display:flex;justify-content:center;gap:10px;padding:7px}
+.bottom-actions button{min-width:44%;font-size:13px}
+body{padding-bottom:55px}
+@media(max-width:380px){.profile-actions{gap:4px}.profile-actions button{font-size:11px;padding:6px}.profile-photo,.profile-placeholder{width:42px;height:42px}.profile-info h2{font-size:14px}}
+</style>
+</head>
+<body>
+<header>
+<button type="button" id="headerBack" class="header-back" onclick="headerBackAction()">Back</button>
+<h2>Sassta Bazar</h2><p>Har Zaroorat Ek Bazar</p>
+<button type="button" class="topbtn" id="settingsButton" onclick="openSettings()">⚙️</button>
+</header>
+<main>
+<section id="customerLogin" class="hidden"><div class="panel" style="margin-top:35px;padding:20px">
+<h2 style="text-align:center">Welcome to Sassta Bazar</h2><p style="text-align:center">Sign in to continue to the marketplace.</p>
+<button class="loginbtn" id="customerGoogleButton" onclick="customerLogin('Google')"><span class="google-mark">G</span> Continue with Google</button>
+<button class="loginbtn" id="customerFacebookButton" onclick="customerLogin('Facebook')"><span class="facebook-mark">f</span> Continue with Facebook</button>
+<p id="customerLoginMessage" class="note" style="text-align:center">Your sign-in will be saved on this device.</p>
+</div></section>
+<section id="home" class="hidden"><div class="grid" id="categories"></div></section>
+<section id="registrationCategory" class="hidden"><button class="back" onclick="goHome()">← Back</button><h2>Select Registration</h2><p class="note">Choose the registration category for your business.</p><div id="registrationCategories"></div></section>
+<section id="listing" class="hidden"><div class="search-row"><button class="back" onclick="goHome()">← Back</button><input id="sellerSearch" type="search" placeholder="Search shops or products"><button class="green search-btn" onclick="runSearch()">Search</button></div><h2 id="listTitle" style="font-size:12px"></h2><div id="sellerList"></div></section>
+<section id="detail" class="hidden"><div class="profile-head"><button class="back" onclick="goListing()">← Back</button><div class="spacer"></div></div><div id="sellerDetail"></div><h3>Products and Prices</h3><div id="productList"></div></section>
+<section id="login" class="hidden"><button class="back" onclick="registrationBack()">← Back</button><div class="panel"><h2>Registration Login</h2><p>Choose how you want to continue.</p><button class="loginbtn" onclick="demoLogin('Google')"><span class="google-mark">G</span> Continue with Google</button><button class="loginbtn" onclick="demoLogin('Facebook')"><span class="facebook-mark">f</span> Continue with Facebook</button><p id="loginMessage" class="note">Choose Google or Facebook to register your business.</p></div></section>
+<section id="registration" class="hidden"><button class="back" onclick="registrationBack()">← Back</button><h2>Seller Registration</h2>
+<form id="regForm"><label>Profile Photo</label><input id="profileImageFile" type="file" accept="image/*"><img id="profileImagePreview" class="photo-preview hidden">
+<p class="note">Choose a photo from your phone. The photo will be compressed and saved with your profile.</p>
+<label>Business Name</label><input id="shopName" required placeholder="Enter business name"><label>Bio</label><textarea id="bio" required rows="4" placeholder="Enter business details"></textarea><select id="regCategory" required></select>
+<div class="profile-buttons"><button class="green" type="submit" id="saveProfileButton">Save</button><button class="light" type="button" onclick="editSavedProfile()">Edit</button></div></form><p id="regMessage" class="note"></p></section>
+<section id="dashboard" class="hidden"><div class="panel profile-card">
+<div class="profile-top" onclick="openProfileForEdit()"><div id="savedProfilePhoto"></div><div class="profile-info"><h2 id="savedProfileName"></h2><p id="dashboardCategory"></p></div></div>
+<button id="savedProfileBio" class="bio-toggle" onclick="toggleBio('savedProfileBio')"></button><div id="sellerOffer" class="offer-text hidden"></div>
+<div class="profile-actions"><button class="light" id="ownerFollow" onclick="refreshOwnerFollowers()">Followers: 0</button><button class="light iconbtn" onclick="shareSellerProfile()">↗</button><button class="green iconbtn" onclick="openBusinessMessenger()">💬</button><button class="light iconbtn" onclick="showNotifications()">🔔</button></div>
+<div class="profile-buttons"><button class="light" onclick="openProductUpload()">＋ Upload Product</button><button class="light" onclick="logoutSeller()">Logout</button></div>
+</div><div id="dashboardProducts"></div></section>
+<section id="productUpload" class="hidden"><div class="profile-head"><button class="back" onclick="showDashboard()">← Back</button><div class="spacer"></div></div><div class="panel">
+<h2 id="productFormHeading">Upload Product</h2><form id="productForm"><label>Product Name</label><input id="productName" required placeholder="Enter product name"><label>Price (Rs.)</label><input id="productPrice" required type="number" min="0" placeholder="Enter price"><label>Quantity / Box</label><input id="productQuantity" placeholder="Example: 1 box, 1 kg"><label>Product Photo</label><input id="productImageFile" type="file" accept="image/*"><img id="productImagePreview" class="photo-preview hidden"><p class="note">Product photos are compressed before saving.</p><button class="green full" type="submit" id="saveProductButton">Save Product</button><button class="light full hidden" id="cancelProductEdit" type="button" onclick="cancelProductEdit()">Cancel Edit</button></form><p id="productSaveMessage" class="note"></p></div><div id="myProducts"></div></section>
+<section id="complaint" class="hidden"><button class="back" onclick="goHome()">← Back</button><h2>Help Box</h2><form id="complaintForm"><textarea id="complaintText" rows="5"></textarea><button class="green full">Send</button></form></section>
+</main>
+<div id="settings"><div class="drawer"><button class="light" onclick="closeSettings()">✕ Close</button><h2>Settings</h2><button class="settingbtn" onclick="openRegistrationCategories()">Registration</button><button class="settingbtn" onclick="openSection('complaint')">Help Box</button></div></div>
+
+<div id="messengerModal"><div class="modal-card">
+<div class="profile-head"><h3 id="messengerHeading" style="margin:0">Messenger</h3><div class="spacer"></div><button class="back" onclick="closeMessenger()">✕</button></div>
+<p id="messengerName" class="note"></p>
+<div id="messengerInbox" class="hidden"></div>
+<div id="chatPanel" class="hidden">
+<div class="messenger-options"><button class="light" onclick="messengerChat()">💬 Chat</button><button class="light" onclick="document.getElementById('chatPicture').click()">🖼️ Picture Upload</button></div>
+<div id="chatStatus" class="note"></div>
+<div id="messengerMessages"><p class="note">Loading messages...</p></div>
+<div id="messengerExtra"><textarea id="chatText" placeholder="Type your message"></textarea>
+<input id="chatPicture" type="file" accept="image/*" class="hidden">
+<img id="chatPicturePreview" class="photo-preview hidden">
+<div class="chat-compose"><button class="light" onclick="document.getElementById('chatPicture').click()">＋ Photo</button><button class="green" onclick="sendChatMessage()">Send</button></div>
+<div class="profile-actions"><button class="light" id="blockButton" onclick="toggleBlock()">Block</button><button class="light" onclick="deleteChatForMe()">Delete Chat</button></div>
+</div></div></div></div>
+
+<div id="cartModal"><div class="modal-card"><div class="profile-head"><h3 style="margin:0">Shopping Card</h3><div class="spacer"></div><button class="back" onclick="closeCart()">✕</button></div><p class="note">Your private shopping card.</p><div id="cartItems"></div><div id="cartTotal" class="price"></div></div></div>
+<div class="bottom-actions" id="bottomActions"><button class="light" onclick="openCart()">🛒 Shopping Card</button><button class="light" onclick="openCustomerMessenger()">💬 Messenger</button></div>
+<footer>Sassta Bazar · Pakistan</footer>
+
+<script>
+const firebaseConfig={
+apiKey:"AIzaSyD1q478zLS8BKOaN6ySTid7QW1es4No92I",
+authDomain:"sassta-bazar.firebaseapp.com",
+projectId:"sassta-bazar",
+storageBucket:"sassta-bazar.firebasestorage.app",
+messagingSenderId:"553784080865",
+appId:"1:553784080865:web:192885a48a80f075cbfaa0"
+};
+let auth=null,sellerAuth=null,db=null,googleProvider=null,facebookProvider=null,sellerGoogleProvider=null,sellerFacebookProvider=null,firebaseReady=false;
+let persistenceReady=Promise.resolve(),sellerPersistenceReady=Promise.resolve();
+try{
+ if(typeof firebase!=="undefined"){
+  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+  auth=firebase.app().auth();
+  let sellerApp=firebase.apps.find(a=>a.name==="sellerAuth");
+  if(!sellerApp)sellerApp=firebase.initializeApp(firebaseConfig,"sellerAuth");
+  sellerAuth=sellerApp.auth();db=firebase.firestore();
+  googleProvider=new firebase.auth.GoogleAuthProvider();googleProvider.setCustomParameters({prompt:"select_account"});
+  facebookProvider=new firebase.auth.FacebookAuthProvider();
+  sellerGoogleProvider=new firebase.auth.GoogleAuthProvider();sellerGoogleProvider.setCustomParameters({prompt:"select_account"});
+  sellerFacebookProvider=new firebase.auth.FacebookAuthProvider();firebaseReady=true;
+  persistenceReady=auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.error);
+  sellerPersistenceReady=sellerAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.error);
+ }
+}catch(e){console.error(e);auth=null;sellerAuth=null;db=null;firebaseReady=false}
+
+const categories=[
+{name:"Girls Fabric",image:"https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85"},
+{name:"Restaurant",image:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=85"},
+{name:"Boys Fabric",image:"https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=800&q=85"},
+{name:"Shop",image:"https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=85"},
+{name:"Home Food",image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=85"},
+{name:"Accessories",image:"https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=800&q=85"}
+];
+let activeCategory="",activeSeller=null,currentSellerId=null,sellers=[],complaints=[];
+let selectedProductImage="",selectedProfileImage="",editingProfile=false,editingProductId=null;
+let followCountUnsubscribe=null,initialAuthResolved=false;
+let chatRef=null,chatUnsubscribe=null,currentConversation=null,chatMode="",chatPictureData="",pendingChatPicture=null;
+let cartItems=[];
+function sellerRef(uid){if(!db)throw new Error("Firebase database unavailable.");return db.collection("sellers").doc(uid)}
+function showError(prefix,e){console.error(prefix,e);alert(prefix+": "+(e&&e.message?e.message:"Please try again."))}
+async function compressImage(file){
+ if(!file||!file.type.startsWith("image/"))throw new Error("Please select a valid image.");
+ if(file.size>12*1024*1024)throw new Error("Please select an image smaller than 12 MB.");
+ const url=URL.createObjectURL(file);
+ try{
+  const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error("Unable to read image."));img.src=url});
+  const canvas=document.createElement("canvas"),ratio=Math.min(1,750/Math.max(img.width,img.height));
+  canvas.width=Math.max(1,Math.round(img.width*ratio));canvas.height=Math.max(1,Math.round(img.height*ratio));
+  const ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  let q=.65,data=canvas.toDataURL("image/jpeg",q);
+  while(data.length>480000&&q>.30){q-=.08;data=canvas.toDataURL("image/jpeg",q)}
+  if(data.length>480000)throw new Error("Photo too large. Select a smaller picture.");
+  return data;
+ }finally{URL.revokeObjectURL(url)}
+}
+function safeImage(u){return typeof u==="string"&&(/^https?:\/\//i.test(u)||/^data:image\//i.test(u))}
+function makeImage(u,icon){return safeImage(u)?'<img class="avatar" src="'+u+'" alt="Photo">':'<div class="avatar">'+icon+'</div>'}
+async function getFollowerCount(id){return (await sellerRef(id).collection("followers").get()).size}
+function followerRef(sid,uid){return sellerRef(sid).collection("followers").doc(uid)}
+async function refreshCustomerFollow(sid,btn,count){
+ try{
+  const n=await getFollowerCount(sid);if(count)count.textContent="Followers: "+n;
+  const u=auth&&auth.currentUser;
+  if(btn){
+   if(u&&u.uid===sid){btn.textContent="Your Shop";btn.disabled=true}
+   else{btn.disabled=false;const d=u?await followerRef(sid,u.uid).get():null;btn.textContent=d&&d.exists?"Following ✓":"Follow";btn.classList.toggle("followed",!!(d&&d.exists))}
+  }
+ }catch(e){console.error(e);if(count)count.textContent="Followers unavailable"}
+}
+async function toggleFollow(sid,btn,count){
+ if(!auth||!auth.currentUser){alert("Please sign in to your customer account first.");return}
+ const u=auth.currentUser;if(u.uid===sid){alert("You cannot follow your own shop.");return}
+ btn.disabled=true;
+ try{
+  const ref=followerRef(sid,u.uid),d=await ref.get();
+  if(d.exists)await ref.delete();else await ref.set({uid:u.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  await refreshCustomerFollow(sid,btn,count);
+ }catch(e){showError("Unable to update Follow",e)}finally{btn.disabled=false}
+}
+async function refreshOwnerFollowers(){if(!currentSellerId)return;const b=document.getElementById("ownerFollow");try{b.textContent="Followers: "+await getFollowerCount(currentSellerId)}catch(e){b.textContent="Followers unavailable"}}
+function watchOwnerFollowers(){
+ if(followCountUnsubscribe)followCountUnsubscribe();
+ if(!db||!currentSellerId)return;
+ followCountUnsubscribe=sellerRef(currentSellerId).collection("followers").onSnapshot(s=>{document.getElementById("ownerFollow").textContent="Followers: "+s.size},e=>console.error(e));
+}
+document.getElementById("profileImageFile").addEventListener("change",async function(){const p=document.getElementById("profileImagePreview");selectedProfileImage="";if(!this.files[0]){p.classList.add("hidden");return}try{selectedProfileImage=await compressImage(this.files[0]);p.src=selectedProfileImage;p.classList.remove("hidden")}catch(e){this.value="";alert(e.message)}});
+document.getElementById("productImageFile").addEventListener("change",async function(){const p=document.getElementById("productImagePreview");selectedProductImage="";if(!this.files[0]){p.classList.add("hidden");return}try{selectedProductImage=await compressImage(this.files[0]);p.src=selectedProductImage;p.classList.remove("hidden")}catch(e){this.value="";alert(e.message)}});
+document.getElementById("chatPicture").addEventListener("change",async function(){
+ const p=document.getElementById("chatPicturePreview");chatPictureData="";
+ if(!this.files[0]){p.classList.add("hidden");return}
+ try{chatPictureData=await compressImage(this.files[0]);p.src=chatPictureData;p.classList.remove("hidden")}catch(e){this.value="";alert(e.message)}
+});
+async function loadAllSellers(){
+ if(!db)return [];
+ const snap=await db.collection("sellers").get(),out=[];
+ for(const doc of snap.docs){
+  const d=doc.data()||{},ps=await sellerRef(doc.id).collection("products").get();
+  out.push({id:doc.id,firebaseUid:doc.id,category:d.category||"",name:d.name||"",bio:d.bio||"",dp:d.dp||"",offer:d.offer||"",products:ps.docs.map(p=>({id:p.id,...p.data()}))});
+ }
+ sellers=out;renderSellerList(document.getElementById("sellerSearch").value||"");return out;
+}
+async function customerLogin(provider){
+ const m=document.getElementById("customerLoginMessage"),g=document.getElementById("customerGoogleButton"),f=document.getElementById("customerFacebookButton");
+ if(!auth||!firebaseReady){m.textContent="Login service unavailable. Check Firebase setup.";return}
+ g.disabled=f.disabled=true;m.textContent="Opening "+provider+" sign-in...";
+ try{await persistenceReady;const r=provider==="Google"?await auth.signInWithPopup(googleProvider):await auth.signInWithPopup(facebookProvider);if(!r.user)throw new Error("Login not completed.");showSection("home")}
+ catch(e){m.textContent=provider+" login failed: "+e.message}finally{g.disabled=f.disabled=false}
+}
+async function demoLogin(provider){
+ const m=document.getElementById("loginMessage");
+ try{
+  if(!sellerAuth)throw new Error("Seller login unavailable.");
+  m.textContent="Opening "+provider+" seller sign-in...";await sellerPersistenceReady;
+  const r=provider==="Google"?await sellerAuth.signInWithPopup(sellerGoogleProvider):await sellerAuth.signInWithPopup(sellerFacebookProvider);
+  if(r.user)await handleSignedInUser(r.user);
+ }catch(e){m.textContent=provider+" login failed: "+e.message}
+}
+async function handleSignedInUser(user){
+ if(!user||user.isAnonymous)return;if(!db)throw new Error("Database unavailable.");
+ currentSellerId=user.uid;const d=await sellerRef(user.uid).get();
+ if(d.exists){
+  const data=d.data()||{},ps=await sellerRef(user.uid).collection("products").get();
+  const s={id:user.uid,firebaseUid:user.uid,category:data.category||"",name:data.name||"",bio:data.bio||"",dp:data.dp||"",offer:data.offer||"",products:ps.docs.map(p=>({id:p.id,...p.data()}))};
+  const i=sellers.findIndex(x=>x.id===user.uid);if(i>=0)sellers[i]=s;else sellers.push(s);showDashboard();
+ }else{resetRegistration();document.getElementById("regMessage").textContent="Login successful. Complete your business registration.";showSection("registration")}
+}
+if(auth)auth.onAuthStateChanged(async u=>{
+ await persistenceReady;
+ if(!initialAuthResolved){initialAuthResolved=true;showSection(u?"home":"customerLogin");return}
+ if(!u){activeSeller=null;closeSettings();showSection("customerLogin")}
+});else showSection("customerLogin");
+
+function renderCategories(){
+ const b=document.getElementById("categories");b.innerHTML="";
+ categories.forEach(c=>{const x=document.createElement("button");x.className="category";x.innerHTML='<div class="catpic"><img loading="lazy" alt=""></div><strong></strong>';x.querySelector("img").src=c.image;x.querySelector("img").alt=c.name;x.querySelector("strong").textContent=c.name;x.onclick=()=>showCategory(c.name);b.appendChild(x)});
+ document.getElementById("regCategory").innerHTML=categories.map(c=>'<option value="'+c.name+'">'+c.name+'</option>').join("");renderRegistrationCategories();
+}
+function renderRegistrationCategories(){
+ const b=document.getElementById("registrationCategories");b.innerHTML="";
+ categories.forEach(c=>{const x=document.createElement("button");x.className="registration-option";x.textContent=c.name+" Registration";x.onclick=()=>{activeCategory=c.name;document.getElementById("regCategory").value=c.name;startCategoryRegistration()};b.appendChild(x)});
+}
+function showSection(id){
+ ["customerLogin","home","registrationCategory","listing","detail","login","registration","dashboard","productUpload","complaint"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+ document.getElementById("headerBack").style.display=["home","customerLogin"].includes(id)?"none":"block";
+ document.getElementById("settingsButton").style.display=id==="customerLogin"?"none":"block";
+ document.getElementById("bottomActions").style.display=id==="customerLogin"?"none":"flex";window.scrollTo(0,0);
+}
+function headerBackAction(){const v=id=>!document.getElementById(id).classList.contains("hidden");if(v("listing")||v("registrationCategory")||v("dashboard"))goHome();else if(v("detail"))goListing();else if(v("login")||v("registration"))registrationBack();else if(v("productUpload"))showDashboard();else if(v("complaint"))goHome()}
+function openSettings(){document.getElementById("settings").style.display="block"}
+function closeSettings(){document.getElementById("settings").style.display="none"}
+function openSection(id){closeSettings();showSection(id)}
+function goHome(){showSection("home")}function goListing(){showCategory(activeCategory)}
+function openRegistrationCategories(){closeSettings();renderRegistrationCategories();showSection("registrationCategory")}
+function resetRegistration(){document.getElementById("regForm").reset();document.getElementById("regCategory").value=activeCategory;document.getElementById("regMessage").textContent="";selectedProfileImage="";editingProfile=false;document.getElementById("profileImagePreview").classList.add("hidden")}
+function showCategory(c){activeCategory=c;document.getElementById("listTitle").textContent=c;document.getElementById("sellerSearch").value="";document.getElementById("sellerList").innerHTML='<div class="panel">Loading shops...</div>';showSection("listing");loadAllSellers().catch(e=>showError("Unable to load shops",e))}
+function runSearch(){renderSellerList(document.getElementById("sellerSearch").value)}
+document.getElementById("sellerSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();runSearch()}});
+async function startCategoryRegistration(){
+ resetRegistration();closeSettings();
+ if(sellerAuth&&sellerAuth.currentUser&&!sellerAuth.currentUser.isAnonymous){
+  try{const d=await sellerRef(sellerAuth.currentUser.uid).get();if(d.exists&&d.data().category&&d.data().category!==activeCategory){alert("This account is already registered in "+d.data().category+".");return}await handleSignedInUser(sellerAuth.currentUser)}catch(e){showError("Unable to open seller profile",e)}return;
+ }
+ showSection("login");
+}
+function renderSellerList(q){
+ const term=(q||"").trim().toLowerCase(),found=sellers.filter(s=>s.category===activeCategory&&(!term||(s.name||"").toLowerCase().includes(term)||(s.bio||"").toLowerCase().includes(term)||(s.products||[]).some(p=>(p.name||"").toLowerCase().includes(term))));
+ const b=document.getElementById("sellerList");b.innerHTML="";
+ if(!found.length){b.innerHTML='<div class="panel">No matching shops or products found in this category.</div>';return}
+ found.forEach(s=>{const el=document.createElement("div");el.className="item";el.innerHTML=makeImage(s.dp,"🏪")+'<div style="min-width:0;flex:1"><h3></h3><p></p><p></p><button class="green">View Profile</button></div>';el.querySelector("h3").textContent=s.name;el.querySelectorAll("p")[0].textContent="Category: "+s.category;el.querySelectorAll("p")[1].textContent=(s.bio||"").slice(0,75);el.querySelector("button").onclick=()=>showSeller(s.id);b.appendChild(el)});
+}
+function showSeller(id){
+ activeSeller=sellers.find(s=>s.id===id);if(!activeSeller)return;const s=activeSeller,d=document.getElementById("sellerDetail");d.innerHTML="";
+ const card=document.createElement("div");card.className="panel profile-card";
+ card.innerHTML='<div class="profile-top"><div id="customerPhoto"></div><div class="profile-info"><h2 id="customerName"></h2><p id="customerCategory"></p></div></div><button id="customerBio" class="bio-toggle"></button><div id="customerOffer" class="offer-text hidden"></div><div class="profile-actions"><button id="followBtn" class="light">Follow</button><span id="customerFollowerCount" class="follow-count">Followers: ...</span><button class="light iconbtn" onclick="shareCurrentSeller()">↗</button><button class="green iconbtn" onclick="messageSeller()">💬</button><button class="light iconbtn" onclick="showNotifications()">🔔</button></div>';d.appendChild(card);
+ document.getElementById("customerPhoto").innerHTML=safeImage(s.dp)?'<img class="profile-photo" src="'+s.dp+'">':'<div class="profile-placeholder">🏪</div>';
+ document.getElementById("customerName").textContent=s.name||"";document.getElementById("customerCategory").textContent=s.category||"";
+ const bio=document.getElementById("customerBio");bio.dataset.expanded="false";bio.textContent=(s.bio||"").slice(0,100)+(s.bio&&s.bio.length>100?"…":"");bio.onclick=()=>{const full=bio.dataset.expanded!=="true";bio.dataset.expanded=String(full);bio.textContent=full?s.bio:(s.bio||"").slice(0,100)+(s.bio&&s.bio.length>100?"…":"")};
+ const offer=document.getElementById("customerOffer");if(s.offer){offer.textContent="🎉 Offer: "+s.offer;offer.classList.remove("hidden")}
+ const fb=document.getElementById("followBtn"),cb=document.getElementById("customerFollowerCount");fb.onclick=()=>toggleFollow(s.id,fb,cb);refreshCustomerFollow(s.id,fb,cb);renderCustomerProducts(s);showSection("detail");
+}
+function renderCustomerProducts(s){
+ const b=document.getElementById("productList");b.innerHTML="";
+ (s.products||[]).forEach(p=>{const r=document.createElement("div");r.className="item";r.innerHTML=makeImage(p.image,"📦")+'<div style="flex:1;min-width:0"><h3></h3><p class="price"></p><p class="qty"></p><button class="green add-cart">＋ Add to Shopping Card</button></div>';r.querySelector("h3").textContent=p.name||"";r.querySelector(".price").textContent="Rs. "+p.price;r.querySelector(".qty").textContent="Quantity: "+(p.quantity||"Not specified");r.querySelector(".add-cart").onclick=()=>addToCart(s,p);b.appendChild(r)});
+}
+async function addToCart(s,p){
+ const u=auth&&auth.currentUser;if(!u){alert("Please sign in first.");return}
+ try{
+  const id=s.id+"_"+p.id,ref=db.collection("customers").doc(u.uid).collection("cart").doc(id),old=await ref.get();
+  if(old.exists){await ref.update({quantity:firebase.firestore.FieldValue.increment(1),updatedAt:firebase.firestore.FieldValue.serverTimestamp()})}
+  else{await ref.set({shopId:s.id,shopName:s.name,productId:p.id,productName:p.name,price:Number(p.price)||0,quantity:1,productQuantity:p.quantity||"",category:s.category,createdAt:firebase.firestore.FieldValue.serverTimestamp()})}
+  alert("Added to your Shopping Card."); 
+ }catch(e){showError("Unable to add product",e)}
+}
+async function loadCart(){
+ const u=auth&&auth.currentUser,b=document.getElementById("cartItems");b.innerHTML="Loading...";
+ if(!u){b.innerHTML='<p class="note">Please sign in to view your Shopping Card.</p>';return}
+ try{
+  const s=await db.collection("customers").doc(u.uid).collection("cart").get();cartItems=s.docs.map(d=>({id:d.id,...d.data()}));renderCart();
+ }catch(e){b.textContent="Unable to load Shopping Card: "+e.message}
+}
+function renderCart(){
+ const b=document.getElementById("cartItems");b.innerHTML="";let total=0;
+ if(!cartItems.length){b.innerHTML='<div class="panel">Your Shopping Card is empty.</div>';document.getElementById("cartTotal").textContent="";return}
+ cartItems.forEach(x=>{
+  const line=(Number(x.price)||0)*(Number(x.quantity)||1);total+=line;
+  const r=document.createElement("div");r.className="panel";r.innerHTML='<strong class="shop"></strong><div class="product"></div><p class="note"></p><div class="profile-actions"><button class="light minus">−</button><span class="qty"></span><button class="light plus">＋</button><button class="light remove">Remove</button></div>';
+  r.querySelector(".shop").textContent=x.shopName||"Shop";r.querySelector(".product").textContent=x.productName||"Product";r.querySelector("p").textContent="Rs. "+x.price+" each";r.querySelector(".qty").textContent=x.quantity;
+  r.querySelector(".minus").onclick=()=>changeCartQty(x,-1);r.querySelector(".plus").onclick=()=>changeCartQty(x,1);r.querySelector(".remove").onclick=()=>removeCartItem(x);b.appendChild(r);
+ });
+ document.getElementById("cartTotal").textContent="Total: Rs. "+total;
+}
+async function changeCartQty(x,n){const u=auth.currentUser,newQ=(Number(x.quantity)||1)+n;if(newQ<1)return;try{await db.collection("customers").doc(u.uid).collection("cart").doc(x.id).update({quantity:newQ,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await loadCart()}catch(e){showError("Cart update failed",e)}}
+async function removeCartItem(x){const u=auth.currentUser;if(!confirm("Remove this product from your Shopping Card?"))return;try{await db.collection("customers").doc(u.uid).collection("cart").doc(x.id).delete();await loadCart()}catch(e){showError("Unable to remove item",e)}}
+function openCart(){document.getElementById("cartModal").style.display="flex";loadCart()}
+function closeCart(){document.getElementById("cartModal").style.display="none"}
+
+function conversationId(customerId,sellerId){return customerId+"_"+sellerId}
+async function startCustomerChat(s){
+ const u=auth&&auth.currentUser;if(!u){alert("Please sign in to your customer account.");return}
+ if(u.uid===s.id){alert("You cannot message your own shop from customer mode.");return}
+ const id=conversationId(u.uid,s.id),ref=db.collection("conversations").doc(id),d=await ref.get();
+ if(!d.exists)await ref.set({customerId:u.uid,sellerId:s.id,customerName:u.displayName||"Customer",sellerName:s.name||"Shop",lastMessage:"",lastMessageAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),blockedBy:[],deletedFor:[]});
+ await openChat(ref,"customer",s.name||"Shop");
+}
+async function messageSeller(){
+ if(activeSeller){try{await startCustomerChat(activeSeller)}catch(e){showError("Unable to open Messenger",e)}}
+ else if(currentSellerId)openBusinessMessenger();
+ else alert("Select a shop first.");
+}
+function openCustomerMessenger(){
+ if(!auth||!auth.currentUser){alert("Please sign in first.");return}
+ chatMode="customer";document.getElementById("messengerModal").style.display="flex";document.getElementById("messengerHeading").textContent="Personal Messenger";
+ document.getElementById("messengerName").textContent="Your private shop conversations";document.getElementById("chatPanel").classList.add("hidden");document.getElementById("messengerInbox").classList.remove("hidden");loadCustomerInbox();
+}
+async function openBusinessMessenger(){
+ if(!sellerAuth||!sellerAuth.currentUser||!currentSellerId){alert("Please open your business profile first.");return}
+ chatMode="seller";document.getElementById("messengerModal").style.display="flex";document.getElementById("messengerHeading").textContent="Business Messenger";
+ document.getElementById("messengerName").textContent="Customer conversations for your business";document.getElementById("chatPanel").classList.add("hidden");document.getElementById("messengerInbox").classList.remove("hidden");loadBusinessInbox();
+}
+function closeMessenger(){if(chatUnsubscribe){chatUnsubscribe();chatUnsubscribe=null}chatRef=null;currentConversation=null;document.getElementById("messengerModal").style.display="none"}
+async function loadCustomerInbox(){
+ const b=document.getElementById("messengerInbox"),u=auth.currentUser;b.innerHTML='<p class="note">Loading conversations...</p>';
+ try{const s=await db.collection("conversations").where("customerId","==",u.uid).get();renderInbox(s.docs,"customer")}
+ catch(e){b.textContent="Unable to load conversations: "+e.message}
+}
+async function loadBusinessInbox(){
+ const b=document.getElementById("messengerInbox");b.innerHTML='<p class="note">Loading customer conversations...</p>';
+ try{const s=await db.collection("conversations").where("sellerId","==",currentSellerId).get();renderInbox(s.docs,"seller")}
+ catch(e){b.textContent="Unable to load conversations: "+e.message}
+}
+function renderInbox(docs,mode){
+ const b=document.getElementById("messengerInbox");b.innerHTML="";
+ const uid=mode==="customer"?auth.currentUser.uid:currentSellerId;
+ const docs2=docs.filter(d=>!(d.data().deletedFor||[]).includes(uid));
+ if(!docs2.length){b.innerHTML='<div class="panel">No conversations yet. Open a shop and send a message to start chatting.</div>';return}
+ docs2.sort((a,b)=>{const x=a.data().lastMessageAt,y=b.data().lastMessageAt;return (y&&y.toMillis?y.toMillis():0)-(x&&x.toMillis?x.toMillis():0)});
+ docs2.forEach(d=>{
+  const x=d.data(),name=mode==="customer"?(x.sellerName||"Shop"):(x.customerName||"Customer"),r=document.createElement("div");r.className="inbox-row";
+  r.innerHTML="<strong></strong><small></small>";r.querySelector("strong").textContent=name;r.querySelector("small").textContent=x.lastMessage||"Open conversation";r.onclick=()=>openChat(db.collection("conversations").doc(d.id),mode,name);b.appendChild(r);
+ });
+}
+async function openChat(ref,mode,name){
+ if(chatUnsubscribe){chatUnsubscribe();chatUnsubscribe=null}
+ chatRef=ref;chatMode=mode;currentConversation=(await ref.get()).data();
+ if(!currentConversation){alert("Conversation not found.");return}
+ document.getElementById("messengerInbox").classList.add("hidden");document.getElementById("chatPanel").classList.remove("hidden");
+ document.getElementById("messengerName").textContent=name;
+ document.getElementById("chatText").value="";document.getElementById("chatPicture").value="";chatPictureData="";document.getElementById("chatPicturePreview").classList.add("hidden");
+ updateBlockButton();listenChatMessages();
+}
+function listenChatMessages(){
+ if(chatUnsubscribe)chatUnsubscribe();
+ const b=document.getElementById("messengerMessages");b.innerHTML='<p class="note">Loading messages...</p>';
+ chatUnsubscribe=chatRef.collection("messages").onSnapshot(s=>{
+  const arr=s.docs.map(d=>({id:d.id,...d.data()}));arr.sort((a,b)=>{const x=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0,y=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return x-y});
+  renderMessages(arr);
+ },e=>{b.textContent="Message loading failed: "+e.message});
+}
+function renderMessages(arr){
+ const b=document.getElementById("messengerMessages");b.innerHTML="";
+ if(!arr.length){b.innerHTML='<p class="note">No messages yet. Send your first message.</p>';return}
+ const uid=chatMode==="customer"?auth.currentUser.uid:sellerAuth.currentUser.uid;
+ arr.forEach(m=>{
+  const own=m.senderId===uid,item=document.createElement("div");item.className="messenger-message"+(own?" mine":"");
+  if(m.text){const t=document.createElement("div");t.textContent=m.text;item.appendChild(t)}
+  if(m.image&&safeImage(m.image)){
+   const im=document.createElement("img");im.src=m.image;im.alt="Shared picture";item.appendChild(im);
+   const a=document.createElement("a");a.href=m.image;a.download="sassta-bazar-picture.jpg";a.textContent="Download picture";a.style.fontSize="11px";a.style.color="#17633d";item.appendChild(a);
+  }
+  const tools=document.createElement("div");tools.className="message-tools";
+  const time=document.createElement("small");time.textContent=m.createdAt&&m.createdAt.toDate?m.createdAt.toDate().toLocaleString():"";tools.appendChild(time);
+  if(own){const del=document.createElement("button");del.className="light";del.textContent="Delete";del.onclick=()=>deleteOwnMessage(m.id);tools.appendChild(del)}
+  item.appendChild(tools);b.appendChild(item);
+ });
+ b.scrollTop=b.scrollHeight;
+}
+async function sendChatMessage(){
+ if(!chatRef||!currentConversation)return;
+ const text=document.getElementById("chatText").value.trim(),image=chatPictureData;
+ if(!text&&!image){alert("Type a message or choose a picture.");return}
+ const uid=chatMode==="customer"?auth.currentUser.uid:sellerAuth.currentUser.uid;
+ const blocked=currentConversation.blockedBy||[];
+ if(blocked.length){alert("Messaging is blocked in this conversation. Unblock to send messages.");return}
+ const send=document.querySelector("#messengerExtra .chat-compose .green");send.disabled=true;send.textContent="Sending...";
+ try{
+  await chatRef.collection("messages").add({senderId:uid,text:text,image:image||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  await chatRef.update({lastMessage:text||"📷 Picture",lastMessageAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),deletedFor:firebase.firestore.FieldValue.arrayRemove(uid)});
+  document.getElementById("chatText").value="";document.getElementById("chatPicture").value="";chatPictureData="";document.getElementById("chatPicturePreview").classList.add("hidden");
+  currentConversation=(await chatRef.get()).data();updateBlockButton();
+ }catch(e){showError("Message could not be sent",e)}finally{send.disabled=false;send.textContent="Send"}
+}
+async function deleteOwnMessage(id){
+ const uid=chatMode==="customer"?auth.currentUser.uid:sellerAuth.currentUser.uid;
+ if(!confirm("Delete this message or picture?"))return;
+ try{await chatRef.collection("messages").doc(id).delete()}catch(e){showError("Unable to delete message",e)}
+}
+async function toggleBlock(){
+ if(!chatRef||!currentConversation)return;
+ const uid=chatMode==="customer"?auth.currentUser.uid:sellerAuth.currentUser.uid;
+ let list=currentConversation.blockedBy||[];
+ if(list.includes(uid))list=list.filter(x=>x!==uid);else list=[...list,uid];
+ try{await chatRef.update({blockedBy:list,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});currentConversation=(await chatRef.get()).data();updateBlockButton()}
+ catch(e){showError("Unable to update block setting",e)}
+}
+function updateBlockButton(){
+ const uid=chatMode==="customer"?(auth&&auth.currentUser&&auth.currentUser.uid):(sellerAuth&&sellerAuth.currentUser&&sellerAuth.currentUser.uid);
+ const list=currentConversation&&currentConversation.blockedBy||[];
+ const b=document.getElementById("blockButton");b.textContent=list.includes(uid)?"Unblock":"Block";
+ document.getElementById("chatStatus").textContent=list.length?"Messaging is blocked. Unblock to send messages.":"Online chat";
+ document.querySelector("#messengerExtra .chat-compose .green").disabled=list.length>0;
+}
+async function deleteChatForMe(){
+ if(!chatRef||!currentConversation)return;
+ const uid=chatMode==="customer"?auth.currentUser.uid:sellerAuth.currentUser.uid;
+ if(!confirm("Hide this conversation from your inbox? The other person will still have their copy."))return;
+ try{
+  await chatRef.update({deletedFor:firebase.firestore.FieldValue.arrayUnion(uid),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  if(chatUnsubscribe){chatUnsubscribe();chatUnsubscribe=null}
+  chatRef=null;currentConversation=null;document.getElementById("chatPanel").classList.add("hidden");document.getElementById("messengerInbox").classList.remove("hidden");
+  if(chatMode==="customer")loadCustomerInbox();else loadBusinessInbox();
+ }catch(e){showError("Unable to delete chat",e)}
+}
+function messengerChat(){document.getElementById("chatText").focus()}
+async function shareSellerProfile(){const s=sellers.find(x=>x.id===currentSellerId);if(s)shareProfile(s);else alert("Save your profile first.")}
+async function shareCurrentSeller(){if(activeSeller)shareProfile(activeSeller)}
+async function shareProfile(s){
+ const link=window.location.origin+window.location.pathname+"?seller="+encodeURIComponent(s.id);
+ try{if(navigator.share)await navigator.share({title:s.name||"Sassta Bazar",text:(s.name||"Sassta Bazar")+" profile",url:link});else if(navigator.clipboard){await navigator.clipboard.writeText(link);alert("Profile link copied.")}else prompt("Copy profile link:",link)}catch(e){if(e.name!=="AbortError")alert("Unable to share.")}
+}
+function toggleBio(id){const el=document.getElementById(id),s=sellers.find(x=>x.id===currentSellerId);if(!s)return;const ex=el.dataset.expanded!=="true";el.dataset.expanded=String(ex);el.textContent=ex?s.bio:(s.bio||"").slice(0,100)+(s.bio&&s.bio.length>100?"…":"")}
+document.getElementById("regForm").addEventListener("submit",async e=>{
+ e.preventDefault();const user=sellerAuth&&sellerAuth.currentUser;
+ if(!user||user.isAnonymous){document.getElementById("regMessage").textContent="Please sign in first.";showSection("login");return}
+ const btn=document.getElementById("saveProfileButton");btn.disabled=true;btn.textContent="Saving...";
+ try{
+  const ref=sellerRef(user.uid),old=await ref.get(),od=old.exists?old.data():null;
+  if(od&&od.category&&od.category!==activeCategory)throw new Error("This account is already registered in "+od.category+".");
+  const data={uid:user.uid,category:od?od.category:activeCategory,name:document.getElementById("shopName").value.trim(),bio:document.getElementById("bio").value.trim(),dp:selectedProfileImage||(od?od.dp||"":""),offer:od?od.offer||"":"",updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.category)throw new Error("Select a category.");
+  if(!old.exists)data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
+  await ref.set(data,{merge:true});currentSellerId=user.uid;selectedProfileImage="";document.getElementById("profileImageFile").value="";await loadAllSellers();showDashboard();
+ }catch(e){showError("Unable to save profile",e);document.getElementById("regMessage").textContent=e.message}finally{btn.disabled=false;btn.textContent="Save"}
+});
+function openProfileForEdit(){
+ const s=sellers.find(x=>x.id===currentSellerId);if(!s)return;editingProfile=true;activeCategory=s.category;selectedProfileImage="";
+ document.getElementById("regCategory").value=s.category;document.getElementById("shopName").value=s.name||"";document.getElementById("bio").value=s.bio||"";document.getElementById("regMessage").textContent="";document.getElementById("profileImageFile").value="";
+ const p=document.getElementById("profileImagePreview");if(s.dp){p.src=s.dp;p.classList.remove("hidden")}else p.classList.add("hidden");showSection("registration");
+}
+function editSavedProfile(){if(currentSellerId)openProfileForEdit();else alert("Save your profile first.")}
+function registrationBack(){if(editingProfile)showDashboard();else showSection("registrationCategory")}
+function showDashboard(){
+ const s=sellers.find(x=>x.id===currentSellerId);if(!s){showSection("home");return}
+ document.getElementById("savedProfilePhoto").innerHTML=safeImage(s.dp)?'<img class="profile-photo" src="'+s.dp+'">':'<div class="profile-placeholder">🏪</div>';
+ document.getElementById("savedProfileName").textContent=s.name||"";document.getElementById("dashboardCategory").textContent=s.category||"";
+ const bio=document.getElementById("savedProfileBio");bio.dataset.expanded="false";bio.textContent=(s.bio||"").slice(0,100)+(s.bio&&s.bio.length>100?"…":"");
+ const offer=document.getElementById("sellerOffer");if(s.offer){offer.textContent="🎉 Offer: "+s.offer;offer.classList.remove("hidden")}else offer.classList.add("hidden");
+ renderDashboardProducts();showSection("dashboard");watchOwnerFollowers();
+}
+function openProductUpload(){if(!sellers.find(x=>x.id===currentSellerId)){alert("Save your profile first.");return}cancelProductEdit();renderMyProducts();document.getElementById("productSaveMessage").textContent="";showSection("productUpload")}
+function renderDashboardProducts(){
+ const s=sellers.find(x=>x.id===currentSellerId),b=document.getElementById("dashboardProducts");b.innerHTML="";if(!s)return;
+ (s.products||[]).forEach(p=>{const r=document.createElement("div");r.className="item";r.innerHTML=makeImage(p.image,"📦")+'<div style="flex:1;min-width:0"><h3></h3><p class="price"></p><p></p></div>';r.querySelector("h3").textContent=p.name;r.querySelector(".price").textContent="Rs. "+p.price;r.querySelector("p:last-child").textContent="Quantity: "+(p.quantity||"Not specified");b.appendChild(r)});
+}
+function renderMyProducts(){
+ const s=sellers.find(x=>x.id===currentSellerId),b=document.getElementById("myProducts");b.innerHTML="";if(!s||!s.products.length){b.innerHTML='<div class="panel">You have not added any products yet.</div>';return}
+ s.products.forEach(p=>{const r=document.createElement("div");r.className="item";r.innerHTML=makeImage(p.image,"📦")+'<div style="flex:1;min-width:0"><h3></h3><p class="price"></p><p></p><div class="product-tools"><button class="light edit-product">Edit / Update</button><button class="light delete-product">Delete</button></div></div>';r.querySelector("h3").textContent=p.name;r.querySelector(".price").textContent="Rs. "+p.price;r.querySelector("p").textContent="Quantity: "+(p.quantity||"Not specified");r.querySelector(".edit-product").onclick=()=>editProduct(p.id);r.querySelector(".delete-product").onclick=()=>deleteProduct(p.id);b.appendChild(r)});
+}
+function editProduct(id){
+ const s=sellers.find(x=>x.id===currentSellerId),p=s&&s.products.find(x=>x.id===id);if(!p)return;editingProductId=id;selectedProductImage="";document.getElementById("productImageFile").value="";
+ document.getElementById("productName").value=p.name||"";document.getElementById("productPrice").value=p.price||"";document.getElementById("productQuantity").value=p.quantity||"";
+ const v=document.getElementById("productImagePreview");if(p.image){v.src=p.image;v.classList.remove("hidden")}else v.classList.add("hidden");
+ document.getElementById("productFormHeading").textContent="Update Product";document.getElementById("cancelProductEdit").classList.remove("hidden");document.getElementById("productForm").scrollIntoView({behavior:"smooth"});
+}
+function cancelProductEdit(){editingProductId=null;selectedProductImage="";document.getElementById("productForm").reset();document.getElementById("productImagePreview").classList.add("hidden");document.getElementById("productFormHeading").textContent="Upload Product";document.getElementById("cancelProductEdit").classList.add("hidden")}
+document.getElementById("productForm").addEventListener("submit",async e=>{
+ e.preventDefault();const u=sellerAuth&&sellerAuth.currentUser;if(!u||u.uid!==currentSellerId){alert("Please sign in to your seller account.");return}
+ const name=document.getElementById("productName").value.trim(),price=document.getElementById("productPrice").value,quantity=document.getElementById("productQuantity").value.trim();if(!name||price===""){alert("Enter product name and price.");return}
+ const btn=document.getElementById("saveProductButton");btn.disabled=true;btn.textContent="Saving...";
+ try{
+  const sr=await sellerRef(u.uid).get();if(!sr.exists)throw new Error("Seller profile not found.");
+  const cat=sr.data().category;if(!categories.some(c=>c.name===cat))throw new Error("Seller category is invalid.");
+  const pr=sellerRef(u.uid).collection("products");let old=null;
+  if(editingProductId){const d=await pr.doc(editingProductId).get();if(!d.exists)throw new Error("Product no longer exists.");old=d.data()}
+  const data={category:cat,name,price,quantity,image:selectedProductImage||(old?old.image||"":""),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(editingProductId)await pr.doc(editingProductId).update(data);else{data.createdAt=firebase.firestore.FieldValue.serverTimestamp();await pr.add(data)}
+  await loadAllSellers();cancelProductEdit();renderMyProducts();renderDashboardProducts();document.getElementById("productSaveMessage").textContent="Product saved successfully.";
+ }catch(e){showError("Unable to save product",e)}finally{btn.disabled=false;btn.textContent="Save Product"}
+});
+async function deleteProduct(id){
+ const u=sellerAuth&&sellerAuth.currentUser;if(!u||u.uid!==currentSellerId){alert("Please sign in to your seller account.");return}
+ if(!confirm("Are you sure you want to delete this product?"))return;
+ try{await sellerRef(u.uid).collection("products").doc(id).delete();await loadAllSellers();renderMyProducts();renderDashboardProducts()}catch(e){showError("Unable to delete product",e)}
+}
+async function logoutSeller(){
+ if(followCountUnsubscribe){followCountUnsubscribe();followCountUnsubscribe=null}
+ currentSellerId=null;activeSeller=null;editingProfile=false;editingProductId=null;closeSettings();closeMessenger();showSection("home");
+}
+document.getElementById("complaintForm").addEventListener("submit",function(e){
+ e.preventDefault();const m=document.getElementById("complaintText").value.trim();if(!m)return;
+ try{complaints=JSON.parse(localStorage.getItem("sb_complaints")||"[]");complaints.push({text:m,date:new Date().toISOString()});localStorage.setItem("sb_complaints",JSON.stringify(complaints));this.reset();alert("Your message has been saved on this device.")}catch(e){alert("Unable to save your message.")}
+});
+function showNotifications(){alert("Notifications are not connected yet.")}
+renderCategories();
+</script>
+</body>
+</html>
