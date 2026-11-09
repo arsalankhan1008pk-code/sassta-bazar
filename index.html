@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sassta Bazar</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<header>
+<button type="button" id="headerBack" class="header-back" onclick="headerBackAction()">Back</button>
+<h2>Sassta Bazar</h2>
+<p>Har Zaroorat Ek Bazar</p>
+<button type="button" class="topbtn" id="settingsButton" onclick="openSettings()">⚙️</button>
+</header>
+
+<main>
+
+<section id="customerLogin" class="hidden">
+<div class="panel" style="margin-top:35px;padding:20px">
+<h2 style="text-align:center">Welcome to Sassta Bazar</h2>
+<p style="text-align:center">Sign in to continue to the marketplace.</p>
+<button type="button" class="loginbtn" id="customerGoogleButton" onclick="customerLogin('Google')"><span class="google-mark">G</span> Continue with Google</button>
+<button type="button" class="loginbtn" id="customerFacebookButton" onclick="customerLogin('Facebook')"><span class="facebook-mark">f</span> Continue with Facebook</button>
+<p id="customerLoginMessage" class="note" style="text-align:center">Your sign-in will be saved on this device.</p>
+</div>
+</section>
+
+<section id="customerRegistration" class="hidden">
+<div class="panel customer-registration-panel">
+<h2>Customer Account</h2>
+<p class="note">Complete your details to continue to Sassta Bazar.</p>
+<form id="customerRegistrationForm">
+<label>Full Name</label>
+<input id="customerFullName" type="text" required maxlength="100" autocomplete="name" placeholder="Enter your full name">
+<label>City</label>
+<input id="customerCity" type="text" required maxlength="80" autocomplete="address-level2" placeholder="Enter your city">
+<label>Area</label>
+<input id="customerArea" type="text" required maxlength="100" placeholder="Enter your area">
+<label>House Number</label>
+<input id="customerHouseNumber" type="text" required maxlength="60" autocomplete="street-address" placeholder="Enter your house number">
+<button type="submit" class="green full" id="saveCustomerButton">Save and Continue</button>
+</form>
+<p id="customerRegistrationMessage" class="note"></p>
+</div>
+</section>
+
+<section id="home" class="hidden">
+<div class="grid" id="categories"></div>
+</section>
+
+<section id="registrationCategory" class="hidden">
+<button type="button" class="back" onclick="goHome()">← Back</button>
+<h2>Select Registration</h2>
+<p class="note">Choose the registration category for your business.</p>
+<div id="registrationCategories"></div>
+</section>
+
+<section id="shopChooser" class="hidden">
+<div class="panel">
+<h2>My Shops</h2>
+<p class="note">Your business profile.</p>
+<div id="myShopChoices"></div>
+<p id="shopChooserMessage" class="note"></p>
+<button type="button" class="light full" onclick="goHome()">Back to Home</button>
+</div>
+</section>
+
+<section id="listing" class="hidden">
+<div class="search-row">
+<button type="button" class="back" onclick="goHome()">← Back</button>
+<input id="sellerSearch" type="search" placeholder="Search shops or products" aria-label="Search shops or products">
+<button type="button" class="green search-btn" onclick="runSearch()">Search</button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0">
+<h2 id="listTitle" style="margin:0;font-size:12px;flex:1;min-width:0"></h2>
+</div>
+<div id="sellerList"></div>
+</section>
+
+<section id="detail" class="hidden">
+<div class="profile-head">
+<button type="button" class="back" onclick="goListing()">← Back</button><div class="spacer"></div>
+</div>
+<div id="sellerDetail"></div>
+<h3>Products and Prices</h3>
+<div id="productList"></div>
+</section>
+
+<section id="login" class="hidden">
+<button type="button" class="back" onclick="registrationBack()">← Back</button>
+<div class="panel">
+<h2>Registration Login</h2>
+<p>Choose how you want to continue.</p>
+<button type="button" class="loginbtn" onclick="demoLogin('Google')"><span class="google-mark">G</span> Continue with Google</button>
+<button type="button" class="loginbtn" onclick="demoLogin('Facebook')"><span class="facebook-mark">f</span> Continue with Facebook</button>
+<p id="loginMessage" class="note">Choose Google or Facebook to register your business.</p>
+</div>
+</section>
+
+<section id="registration" class="hidden">
+<button type="button" class="back" onclick="registrationBack()">← Back</button>
+<h2 id="registrationHeading">Seller Registration</h2>
+<form id="regForm">
+<label>Profile Photo</label>
+<input id="profileImageFile" type="file" accept="image/*">
+<img id="profileImagePreview" class="photo-preview hidden" alt="Profile preview">
+<p class="note">Choose a photo from your phone. The photo will be compressed and saved with your profile.</p>
+<label>Business Name</label>
+<input id="shopName" required placeholder="Enter business name">
+<label>Bio</label>
+<textarea id="bio" required rows="4" placeholder="Enter business details"></textarea>
+<select id="regCategory" required></select>
+<div class="profile-buttons">
+<button class="green" type="submit" id="saveProfileButton">Save</button>
+<button class="light" type="button" onclick="editSavedProfile()">Edit</button>
+</div>
+</form>
+<p id="regMessage" class="note"></p>
+</section>
+
+<section id="dashboard" class="hidden">
+<div class="panel profile-card">
+<div class="profile-top" onclick="openProfileForEdit()" title="Edit profile">
+<div id="savedProfilePhoto"></div>
+<div class="profile-info"><h2 id="savedProfileName"></h2><p id="dashboardCategory"></p></div>
+</div>
+<button id="savedProfileBio" class="bio-toggle" type="button" onclick="toggleBio('savedProfileBio')"></button>
+<div id="sellerOffer" class="offer-text hidden"></div>
+<div class="profile-actions">
+<button type="button" class="light" id="ownerFollow" onclick="refreshOwnerFollowers()">Followers: 0</button>
+<button type="button" class="light iconbtn" aria-label="Share profile" onclick="shareSellerProfile()">↗</button>
+<button type="button" class="green iconbtn" aria-label="Messenger" onclick="openSellerInbox()">💬</button>
+</div>
+<div class="profile-buttons">
+<button type="button" class="light" onclick="openProductUpload()">＋ Upload Product</button>
+<button type="button" class="light" onclick="logoutSeller()">Logout</button>
+</div>
+</div>
+<div id="dashboardProducts"></div>
+</section>
+
+<section id="productUpload" class="hidden">
+<div class="profile-head"><button type="button" class="back" onclick="showDashboard()">← Back</button><div class="spacer"></div></div>
+<div class="panel">
+<h2 id="productFormHeading">Upload Product</h2>
+<form id="productForm">
+<label>Product Name</label>
+<input id="productName" required placeholder="Enter product name">
+<label>Price (Rs.)</label>
+<input id="productPrice" required type="number" min="0" placeholder="Enter price">
+<label>Quantity / Box</label>
+<input id="productQuantity" placeholder="Example: 1 box, 1 kg">
+<label>Product Photo</label>
+<input id="productImageFile" type="file" accept="image/*">
+<img id="productImagePreview" class="photo-preview hidden" alt="Product preview">
+<p class="note">Choose a product photo from your phone. The photo will be compressed and saved with the product.</p>
+<button class="green full" type="submit" id="saveProductButton">Save Product</button>
+<button class="light full hidden" id="cancelProductEdit" type="button" onclick="cancelProductEdit()">Cancel Edit</button>
+</form>
+<p id="productSaveMessage" class="note"></p>
+</div>
+<div id="myProducts"></div>
+</section>
+
+<section id="complaint" class="hidden">
+<button type="button" class="back" onclick="goHome()">← Back</button>
+<h2>Help Box</h2>
+<form id="complaintForm">
+<textarea id="complaintText" rows="5" aria-label="Message"></textarea>
+<button class="green full" type="submit">Send</button>
+</form>
+</section>
+</main>
+
+<div id="settings"><div class="drawer">
+<button type="button" class="light" onclick="closeSettings()">✕ Close</button>
+<h2>Settings</h2>
+<button type="button" class="settingbtn" onclick="openRegistrationCategories()">Registration</button>
+<button type="button" class="settingbtn" onclick="openSection('complaint')">Help Box</button>
+</div></div>
+
+<div id="floatingCustomerBar" class="floating-customer-bar hidden">
+<button type="button" class="float-btn cart" onclick="openCartModal()">🛒 Cart</button>
+<button type="button" class="float-btn messenger" onclick="openCustomerInbox()">💬 Messenger</button>
+</div>
+
+<div id="cartModal">
+<div class="modal-card">
+<div class="profile-head">
+<h3>Shopping Cart</h3>
+<div class="spacer"></div>
+<button type="button" class="back" aria-label="Close Shopping Cart" onclick="closeCartModal()">✕</button>
+</div>
+<div id="cartItemsList" style="flex:1;overflow-y:auto;margin:10px 0"></div>
+<button type="button" class="green full" onclick="checkoutCart()">Checkout / Place Order</button>
+</div>
+</div>
+
+<div id="messengerModal">
+<div class="modal-card">
+<div class="profile-head">
+<button type="button" class="back" id="messengerBack" onclick="messengerBack()">←</button>
+<h3 id="messengerTitle" style="margin:0">Messenger</h3>
+<div class="spacer"></div>
+<div id="messengerConversationTools" class="messenger-header-actions hidden">
+<button type="button" class="light" id="blockChatButton" onclick="toggleBlockChat()">Block</button>
+<button type="button" class="light" onclick="deleteCompleteChat()">Delete</button>
+</div>
+<button type="button" class="back messenger-close-button" aria-label="Close Messenger" onclick="closeMessenger()">✕</button>
+</div>
+<p id="messengerName" class="note"></p>
+<div id="messengerInboxTools" class="messenger-toolbar hidden">
+<div class="search-row" style="margin:0 0 6px 0;">
+<input id="inboxSearchInput" type="search" placeholder="Search chats..." aria-label="Search chats">
+<button type="button" class="green search-btn" onclick="filterMessengerInbox()">Search</button>
+</div>
+<button type="button" class="light" onclick="loadMessengerInbox()">Refresh Inbox</button>
+</div>
+<div id="messengerInbox" class="hidden"></div>
+<div id="messengerStatus" class="messenger-status"></div>
+<div id="messengerMessages"><p class="note">Your messages will appear here.</p></div>
+<div id="messengerExtra">
+<div class="messenger-options">
+<button type="button" class="light" onclick="messengerChat()">💬 Msg</button>
+<button type="button" class="light" onclick="messengerPicture()">🖼️ Pic Upload / Gallery</button>
+</div>
+<textarea id="chatText" rows="2" placeholder="Type your message"></textarea>
+<input id="chatPicture" type="file" accept="image/*" class="hidden">
+<div id="chatPicturePreviewContainer" class="photo-preview-container hidden">
+<img id="chatPicturePreview" class="photo-preview" alt="Selected picture">
+<button type="button" class="photo-cancel-btn" onclick="cancelChatPicture()">❌</button>
+</div>
+<button type="button" class="green full" id="sendMessengerButton" onclick="sendMessengerMessage()">Send</button>
+</div>
+</div>
+</div>
+
+<footer>Sassta Bazar · Pakistan</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
